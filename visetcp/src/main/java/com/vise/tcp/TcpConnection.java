@@ -207,7 +207,7 @@ public class TcpConnection {
                 if (selectionKey != null) selectionKey.selector().wakeup();
             }
         } catch (IOException ex) {
-            ViseLog.e("Unable to close TCP connection.", ex);
+            ViseLog.e("Unable to close TCP connection." + ex);
         }
         if (wasConnected) {
             notifyDisconnected();

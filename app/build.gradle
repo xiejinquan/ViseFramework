@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.vise.app"
-        minSdkVersion 8
+        minSdkVersion 9
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -24,4 +24,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.vise.xiaoyaoyou:viselog:1.0.0'
+
+    compile project(':visetcp')
+//    compile project(':viseudp')
+    compile project(':viseutils')
 }

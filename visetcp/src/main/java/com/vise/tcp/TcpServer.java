@@ -169,7 +169,7 @@ public class TcpServer implements IThread {
                                 try {
                                     fromConnection.writeOperation();
                                 } catch (IOException ex) {
-                                    ViseLog.e("Unable to write TCP to connection: " + fromConnection, ex);
+                                    ViseLog.e("Unable to write TCP to connection: " + fromConnection + ex);
                                     fromConnection.close();
                                 }
                             }
@@ -181,7 +181,7 @@ public class TcpServer implements IThread {
                                 SocketChannel socketChannel = serverChannel.accept();
                                 if (socketChannel != null) acceptOperation(socketChannel);
                             } catch (IOException ex) {
-                                ViseLog.e("Unable to accept new connection.", ex);
+                                ViseLog.e("Unable to accept new connection." + ex);
                             }
                             continue;
                         }
@@ -223,7 +223,7 @@ public class TcpServer implements IThread {
             try {
                 update(250);
             } catch (IOException ex) {
-                ViseLog.e("Error updating server connections.", ex);
+                ViseLog.e("Error updating server connections." + ex);
                 close();
             }
         }
@@ -261,7 +261,7 @@ public class TcpServer implements IThread {
             connection.notifyConnected();
         } catch (IOException ex) {
             connection.close();
-            ViseLog.e("Unable to accept TCP connection.", ex);
+            ViseLog.e("Unable to accept TCP connection." + ex);
         }
     }
 
@@ -344,7 +344,7 @@ public class TcpServer implements IThread {
                 serverChannel.close();
                 ViseLog.i("Server closed.");
             } catch (IOException ex) {
-                ViseLog.e("Unable to close server.", ex);
+                ViseLog.e("Unable to close server." + ex);
             }
             this.serverChannel = null;
         }

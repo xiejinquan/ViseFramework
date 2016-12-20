@@ -91,7 +91,7 @@ public class TcpClient implements IThread {
                 tcpRegistered = false;
                 selector.wakeup();
                 endTime = System.currentTimeMillis() + timeout;
-                tcp.connect(selector, new InetSocketAddress(host, tcpPort), 5000);
+                tcp.connect(selector, new InetSocketAddress(host, tcpPort), timeout);
             }
 
             // Wait for RegisterTCP.
@@ -277,6 +277,10 @@ public class TcpClient implements IThread {
             tcp.removeListener(listener);
         }
         ViseLog.d("Client listener removed.");
+    }
+
+    public TcpConnection getTcp() {
+        return tcp;
     }
 
     public Thread getUpdateThread () {

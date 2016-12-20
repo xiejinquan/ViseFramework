@@ -74,7 +74,7 @@ public class BleUtil {
                 return success;
             }
         } catch (Exception e) {
-            ViseLog.e("An exception occured while refreshing device", e);
+            ViseLog.e("An exception occured while refreshing device" + e);
         }
         return false;
     }

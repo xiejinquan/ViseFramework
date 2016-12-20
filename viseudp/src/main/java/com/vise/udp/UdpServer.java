@@ -163,7 +163,7 @@ public class UdpServer implements IThread {
                         try {
                             fromAddress = udp.readFromAddress();
                         } catch (IOException ex) {
-                            ViseLog.e("Error reading UDP data.", ex);
+                            ViseLog.e("Error reading UDP data." + ex);
                             continue;
                         }
                         if (fromAddress == null) continue;
@@ -180,9 +180,9 @@ public class UdpServer implements IThread {
                             object = udp.readObject();
                         } catch (IOException ex) {
                             if (fromConnection != null) {
-                                ViseLog.e("Error reading UDP from connection: " + fromConnection, ex);
+                                ViseLog.e("Error reading UDP from connection: " + fromConnection + ex);
                             } else {
-                                ViseLog.e("Error reading UDP from unregistered address: " + fromAddress, ex);
+                                ViseLog.e("Error reading UDP from unregistered address: " + fromAddress + ex);
                             }
                             continue;
                         }
@@ -193,7 +193,7 @@ public class UdpServer implements IThread {
                                             .onDiscoverHost(udp.getDatagramChannel(), fromAddress, dataDispose);
                                     if (responseSent) ViseLog.d("Responded to host discovery from: " + fromAddress);
                                 } catch (IOException ex) {
-                                    ViseLog.e("Error replying to host discovery from: " + fromAddress, ex);
+                                    ViseLog.e("Error replying to host discovery from: " + fromAddress + ex);
                                 }
                                 continue;
                             }
@@ -228,7 +228,7 @@ public class UdpServer implements IThread {
             try {
                 update(250);
             } catch (IOException ex) {
-                ViseLog.e("Error updating server connections.", ex);
+                ViseLog.e("Error updating server connections." + ex);
                 close();
             }
         }
@@ -305,7 +305,7 @@ public class UdpServer implements IThread {
                 serverChannel.close();
                 ViseLog.i("Server closed.");
             } catch (IOException ex) {
-                ViseLog.e("Unable to close server.", ex);
+                ViseLog.e("Unable to close server." + ex);
             }
             this.serverChannel = null;
         }
