@@ -178,6 +178,7 @@ public class Network {
             return (Boolean) getMobileDataEnabledMethod.invoke(getConnectivityManager(context));
         } catch (Exception e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         // 反射失败，默认开启
         return true;

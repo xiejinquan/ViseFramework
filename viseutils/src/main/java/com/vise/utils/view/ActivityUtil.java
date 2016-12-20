@@ -14,6 +14,8 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.vise.log.ViseLog;
+
 import java.util.List;
 
 /**
@@ -48,6 +50,7 @@ public class ActivityUtil {
             context.overridePendingTransition(animIn, animOut);
         } catch (Exception e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
     }
 
@@ -89,6 +92,7 @@ public class ActivityUtil {
             context.overridePendingTransition(animIn, animOut);
         } catch (Exception e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
     }
 

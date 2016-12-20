@@ -510,6 +510,7 @@ public class SilentInstaller {
                 return Integer.parseInt(commandResult.responseMsg.substring(0, 1));
             } catch (NumberFormatException e) {
                 e.printStackTrace();
+                ViseLog.e(e);
             }
         }
         return APP_INSTALL_AUTO;
@@ -546,6 +547,7 @@ public class SilentInstaller {
             return (app != null && (app.flags & ApplicationInfo.FLAG_SYSTEM) > 0);
         } catch (Exception e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         return false;
     }

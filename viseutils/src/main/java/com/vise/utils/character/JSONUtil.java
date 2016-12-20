@@ -2,6 +2,7 @@ package com.vise.utils.character;
 
 import android.text.TextUtils;
 
+import com.vise.log.ViseLog;
 import com.vise.utils.assist.Check;
 
 import org.json.JSONArray;
@@ -683,6 +684,7 @@ public class JSONUtil {
         } catch (JSONException e) {
             if (isPrintException) {
                 e.printStackTrace();
+                ViseLog.e(e);
             }
             return defaultValue;
         }
@@ -711,6 +713,7 @@ public class JSONUtil {
         } catch (JSONException e) {
             if (isPrintException) {
                 e.printStackTrace();
+                ViseLog.e(e);
             }
             return defaultValue;
         }

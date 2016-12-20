@@ -286,6 +286,7 @@ public class TcpServer implements IThread {
                 connection.send(object);
             } catch (IOException e) {
                 e.printStackTrace();
+                ViseLog.e(e);
             }
         }
     }
@@ -299,6 +300,7 @@ public class TcpServer implements IThread {
                     connection.send(object);
                 } catch (IOException e) {
                     e.printStackTrace();
+                    ViseLog.e(e);
                 }
             }
         }
@@ -313,6 +315,7 @@ public class TcpServer implements IThread {
                     connection.send(object);
                 } catch (IOException e) {
                     e.printStackTrace();
+                    ViseLog.e(e);
                 }
                 break;
             }

@@ -50,6 +50,7 @@ public class AndroidUtil {
             return Ipv4Address;
         } catch (Exception e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         return null;
     }

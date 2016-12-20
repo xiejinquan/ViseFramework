@@ -1,5 +1,6 @@
 package com.vise.tcp.inter;
 
+import com.vise.log.ViseLog;
 import com.vise.tcp.TcpConnection;
 
 import java.io.ByteArrayInputStream;
@@ -28,14 +29,17 @@ public interface IDataDispose {
                 return ois.readObject();
             } catch (IOException e) {
                 e.printStackTrace();
+                ViseLog.e(e);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+                ViseLog.e(e);
             } finally {
                 if (ois != null) {
                     try {
                         ois.close();
                     } catch (IOException e) {
                         e.printStackTrace();
+                        ViseLog.e(e);
                     }
                 }
             }

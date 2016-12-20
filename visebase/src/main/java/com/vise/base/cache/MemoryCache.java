@@ -3,6 +3,8 @@ package com.vise.base.cache;
 import android.text.TextUtils;
 import android.util.LruCache;
 
+import com.vise.log.ViseLog;
+
 /**
  * @Description:
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
@@ -50,6 +52,7 @@ public class MemoryCache implements ICache {
             return (T) cache.get(key);
         } catch (Exception e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         return null;
     }

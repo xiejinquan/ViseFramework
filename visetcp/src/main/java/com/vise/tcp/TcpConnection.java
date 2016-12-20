@@ -211,7 +211,7 @@ public class TcpConnection {
         }
         if (wasConnected) {
             notifyDisconnected();
-            ViseLog.i(this + " disconnected.");
+            ViseLog.d(this + " disconnected.");
         }
         setConnected(false);
     }
@@ -224,6 +224,7 @@ public class TcpConnection {
             send(ping);
         } catch (IOException e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
     }
 
@@ -304,6 +305,7 @@ public class TcpConnection {
                     send(ping);
                 } catch (IOException e) {
                     e.printStackTrace();
+                    ViseLog.e(e);
                 }
             }
         }

@@ -128,12 +128,14 @@ public class BitmapUtil {
             return true;
         } catch (Exception e) {
             e.printStackTrace();
+            ViseLog.e(e);
         } finally {
             if (fos != null) {
                 try {
                     fos.close();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    ViseLog.e(e);
                 }
             }
         }

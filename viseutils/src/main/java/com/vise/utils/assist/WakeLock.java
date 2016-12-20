@@ -50,6 +50,7 @@ public class WakeLock {
                 wakeLock.release();
             } catch (Exception e) {
                 e.printStackTrace();
+                ViseLog.e(e);
             }
         }
     }
@@ -60,6 +61,7 @@ public class WakeLock {
                 wakeLock.release();
             } catch (Exception e) {
                 e.printStackTrace();
+                ViseLog.e(e);
             }
         }
     }

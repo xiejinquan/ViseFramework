@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.vise.base.activity.BaseActivity;
+import com.vise.log.ViseLog;
 
 import java.util.Stack;
 
@@ -104,6 +105,7 @@ public class AppManager {
             System.exit(0);
         } catch (Exception e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
     }
 

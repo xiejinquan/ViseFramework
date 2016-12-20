@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.vise.base.ViseConfig;
 import com.vise.base.kit.Codec;
 import com.vise.base.kit.Kits;
+import com.vise.log.ViseLog;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +40,7 @@ public class DiskCache implements ICache {
             cache = DiskLruCache.open(cacheDir, Kits.Package.getVersionCode(context), 1, 10 * 1024 * 1024);        //10M
         } catch (IOException e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
     }
 
@@ -73,6 +75,7 @@ public class DiskCache implements ICache {
             editor.commit();
         } catch (IOException e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
     }
 
@@ -110,6 +113,7 @@ public class DiskCache implements ICache {
 
         } catch (Exception e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         return null;
     }
@@ -127,6 +131,7 @@ public class DiskCache implements ICache {
             return snapshot != null;
         } catch (IOException e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         return false;
     }
@@ -136,6 +141,7 @@ public class DiskCache implements ICache {
             cache.delete();
         } catch (IOException e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
     }
 

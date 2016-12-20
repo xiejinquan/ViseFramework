@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 
+import com.vise.log.ViseLog;
 import com.vise.utils.view.ViewUtil;
 
 import java.util.List;
@@ -61,6 +62,7 @@ public class AppUtil {
             packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         return packageInfo;
     }
@@ -96,6 +98,7 @@ public class AppUtil {
             version = packageInfo.versionName;
         } catch (Exception e) {
             e.printStackTrace();
+            ViseLog.e(e);
             version = "";
         }
         return version;
@@ -115,6 +118,7 @@ public class AppUtil {
             versionCode = packageInfo.versionCode;
         } catch (Exception e) {
             e.printStackTrace();
+            ViseLog.e(e);
             versionCode = 999;
         }
         return versionCode;
@@ -201,6 +205,7 @@ public class AppUtil {
             }
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         return result;
     }

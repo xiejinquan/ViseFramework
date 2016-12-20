@@ -2,6 +2,8 @@ package com.vise.utils.character;
 
 import android.text.format.Time;
 
+import com.vise.log.ViseLog;
+
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,6 +27,7 @@ public class DateTime {
             date = mSimpleDateFormat.parse(strDate);
         } catch (ParseException e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         return date;
     }
@@ -43,6 +46,7 @@ public class DateTime {
             strDate = mSimpleDateFormat.format(date);
         } catch (Exception e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         return strDate;
     }
@@ -68,6 +72,7 @@ public class DateTime {
             mDateTime = mSimpleDateFormat2.format(c.getTime());
         } catch (Exception e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         return mDateTime;
     }
@@ -177,6 +182,7 @@ public class DateTime {
             date = new SimpleDateFormat(DEFYMD).parse(specifiedDay);
         } catch (ParseException e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         c.setTime(date);
         int day = c.get(Calendar.DATE);
@@ -200,6 +206,7 @@ public class DateTime {
             date = new SimpleDateFormat(DEFYMD).parse(specifiedDay);
         } catch (ParseException e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         c.setTime(date);
         int day = c.get(Calendar.DATE);
@@ -229,6 +236,7 @@ public class DateTime {
             }
         } catch (ParseException e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         return dayForWeek;
     }
@@ -248,6 +256,7 @@ public class DateTime {
             return days;
         } catch (ParseException e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         return 0;
     }
@@ -381,6 +390,7 @@ public class DateTime {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         return list;
     }
@@ -401,6 +411,7 @@ public class DateTime {
             gpsUTCDate = utcFormater.parse(utcTime);
         } catch (ParseException e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         SimpleDateFormat localFormater = new SimpleDateFormat(localTimePatten);
         localFormater.setTimeZone(TimeZone.getDefault());
