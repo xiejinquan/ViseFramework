@@ -1,6 +1,6 @@
-package com.vise.udp.inter;
+package com.vise.tcp.inter;
 
-import com.vise.udp.listener.Listener;
+import com.vise.tcp.listener.Listener;
 
 import java.io.IOException;
 

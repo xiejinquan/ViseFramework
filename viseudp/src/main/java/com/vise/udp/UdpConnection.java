@@ -19,6 +19,7 @@ import java.nio.channels.Selector;
  * @date: 2016-12-19 19:16
  */
 public class UdpConnection {
+    public int id;
     private InetSocketAddress connectedAddress;
     private DatagramChannel datagramChannel;
     private SelectionKey selectionKey;
@@ -77,11 +78,11 @@ public class UdpConnection {
         return (InetSocketAddress)datagramChannel.receive(readBuffer);
     }
 
-    public Object readObject (UdpConnection connection) throws IOException {
+    public Object readObject () throws IOException {
         readBuffer.flip();
         try {
             try {
-                Object object = dataDispose.read(connection, readBuffer);
+                Object object = dataDispose.read(this, readBuffer);
                 if (readBuffer.hasRemaining())
                     throw new IOException("Incorrect number of bytes (" + readBuffer.remaining()
                             + " remaining) used to deserialize object: " + object);
@@ -94,19 +95,20 @@ public class UdpConnection {
         }
     }
 
-    public int send (UdpConnection connection, Object object, SocketAddress address) throws IOException {
+    public int send (Object object) throws IOException {
+        if (object == null) throw new IllegalArgumentException("object cannot be null.");
         DatagramChannel datagramChannel = this.datagramChannel;
-        if (datagramChannel == null) throw new SocketException("Connection is closed.");
+        if (datagramChannel == null || connectedAddress == null) throw new SocketException("Connection is closed.");
         synchronized (writeLock) {
             try {
                 try {
-                    dataDispose.write(connection, writeBuffer, object);
+                    dataDispose.write(this, writeBuffer, object);
                 } catch (Exception ex) {
                     throw new IOException("Error serializing object of type: " + object.getClass().getName(), ex);
                 }
                 writeBuffer.flip();
                 int length = writeBuffer.limit();
-                datagramChannel.send(writeBuffer, address);
+                datagramChannel.send(writeBuffer, connectedAddress);
                 lastCommunicationTime = System.currentTimeMillis();
                 boolean wasFullWrite = !writeBuffer.hasRemaining();
                 return wasFullWrite ? length : -1;
@@ -133,4 +135,15 @@ public class UdpConnection {
         return connectedAddress != null && keepAliveMillis > 0 && time - lastCommunicationTime > keepAliveMillis;
     }
 
+    public InetSocketAddress getConnectedAddress() {
+        return connectedAddress;
+    }
+
+    public SelectionKey getSelectionKey() {
+        return selectionKey;
+    }
+
+    public DatagramChannel getDatagramChannel() {
+        return datagramChannel;
+    }
 }
