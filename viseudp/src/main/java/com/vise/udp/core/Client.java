@@ -4,6 +4,7 @@ import com.vise.log.ViseLog;
 import com.vise.udp.command.DiscoverHost;
 import com.vise.udp.command.KeepAlive;
 import com.vise.udp.common.UdpConstant;
+import com.vise.udp.config.UdpConfig;
 import com.vise.udp.core.inter.IData;
 import com.vise.udp.core.inter.IListener;
 import com.vise.udp.core.inter.IThread;
@@ -35,7 +36,6 @@ import java.util.Set;
  */
 public class Client implements IThread {
 
-    private final IData dataDispose;
     private UdpOperate udpOperate;
     private Selector selector;
     private int emptySelects;
@@ -45,7 +45,7 @@ public class Client implements IThread {
     private InetAddress connectHost;
     private int connectUdpPort;
     private boolean isClosed;
-    private ClientDiscoveryHandler discoveryHandler;
+    private UdpConfig udpConfig;
 
     static {
         try {
@@ -56,18 +56,10 @@ public class Client implements IThread {
     }
 
     public Client() {
-        this(UdpConstant.OBJECT_BUFFER_SIZE);
-    }
-
-    public Client(int writeBufferSize) {
-        this(writeBufferSize, IData.DEFAULT);
-    }
-
-    public Client(int writeBufferSize, IData dataDispose) {
-        super();
-        this.dataDispose = dataDispose;
-        this.discoveryHandler = ClientDiscoveryHandler.DEFAULT;
-        this.udpOperate = new UdpOperate(dataDispose, UdpConstant.OBJECT_BUFFER_SIZE);
+        udpConfig = UdpConfig.getInstance();
+        udpConfig.setDataDispose(IData.DEFAULT);
+        udpConfig.setBufferSize(UdpConstant.OBJECT_BUFFER_SIZE);
+        udpConfig.setDiscoveryHandler(ClientDiscoveryHandler.DEFAULT);
         try {
             selector = Selector.open();
         } catch (IOException ex) {
@@ -75,8 +67,8 @@ public class Client implements IThread {
         }
     }
 
-    public void setDiscoveryHandler(ClientDiscoveryHandler newDiscoveryHandler) {
-        discoveryHandler = newDiscoveryHandler;
+    public UdpOperate getUdpOperate() {
+        return udpOperate;
     }
 
     public void connect(String host, int udpPort) throws IOException {
@@ -95,9 +87,8 @@ public class Client implements IThread {
             InetSocketAddress udpAddress = new InetSocketAddress(host, udpPort);
             synchronized (updateLock) {
                 selector.wakeup();
-                if (udpOperate != null) {
-                    udpOperate.connect(selector, udpAddress);
-                }
+                udpOperate = new UdpOperate(udpConfig.getDataDispose(), udpConfig.getBufferSize());
+                udpOperate.connect(selector, udpAddress);
             }
 
         } catch (IOException ex) {
@@ -229,7 +220,7 @@ public class Client implements IThread {
 
     @Override
     public IData getDataDispose() {
-        return dataDispose;
+        return udpConfig.getDataDispose();
     }
 
     @Override
@@ -258,7 +249,7 @@ public class Client implements IThread {
             socket = new DatagramSocket();
             broadcast(udpPort, socket);
             socket.setSoTimeout(timeoutMillis);
-            DatagramPacket packet = discoveryHandler.onRequestNewDatagramPacket();
+            DatagramPacket packet = udpConfig.getClientDiscoveryHandler().onRequestNewDatagramPacket();
             try {
                 socket.receive(packet);
             } catch (SocketTimeoutException ex) {
@@ -266,14 +257,14 @@ public class Client implements IThread {
                 return null;
             }
             ViseLog.i("Discovered server: " + packet.getAddress());
-            discoveryHandler.onDiscoveredHost(packet);
+            udpConfig.getClientDiscoveryHandler().onDiscoveredHost(packet);
             return packet.getAddress();
         } catch (IOException ex) {
             ViseLog.e("Host discovery failed." + ex);
             return null;
         } finally {
             if (socket != null) socket.close();
-            discoveryHandler.onFinally();
+            udpConfig.getClientDiscoveryHandler().onFinally();
         }
     }
 
@@ -285,7 +276,7 @@ public class Client implements IThread {
             broadcast(udpPort, socket);
             socket.setSoTimeout(timeoutMillis);
             while (true) {
-                DatagramPacket packet = discoveryHandler.onRequestNewDatagramPacket();
+                DatagramPacket packet = udpConfig.getClientDiscoveryHandler().onRequestNewDatagramPacket();
                 try {
                     socket.receive(packet);
                 } catch (SocketTimeoutException ex) {
@@ -293,7 +284,7 @@ public class Client implements IThread {
                     return hosts;
                 }
                 ViseLog.i("Discovered server: " + packet.getAddress());
-                discoveryHandler.onDiscoveredHost(packet);
+                udpConfig.getClientDiscoveryHandler().onDiscoveredHost(packet);
                 hosts.add(packet.getAddress());
             }
         } catch (IOException ex) {
@@ -301,7 +292,7 @@ public class Client implements IThread {
             return hosts;
         } finally {
             if (socket != null) socket.close();
-            discoveryHandler.onFinally();
+            udpConfig.getClientDiscoveryHandler().onFinally();
         }
     }
 
@@ -310,7 +301,7 @@ public class Client implements IThread {
         PacketBuffer packetBuffer = new PacketBuffer();
         packetBuffer.setByteBuffer(dataBuffer);
         packetBuffer.setCommand(new DiscoverHost());
-        dataDispose.write(null, packetBuffer);
+        udpConfig.getDataDispose().write(null, packetBuffer);
         dataBuffer.flip();
         byte[] data = new byte[dataBuffer.limit()];
         dataBuffer.get(data);

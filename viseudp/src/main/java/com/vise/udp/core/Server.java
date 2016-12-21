@@ -3,6 +3,7 @@ package com.vise.udp.core;
 import com.vise.log.ViseLog;
 import com.vise.udp.command.KeepAlive;
 import com.vise.udp.common.UdpConstant;
+import com.vise.udp.config.UdpConfig;
 import com.vise.udp.core.inter.IData;
 import com.vise.udp.core.inter.IListener;
 import com.vise.udp.core.inter.IThread;
@@ -25,8 +26,6 @@ import java.util.Set;
  */
 public class Server implements IThread {
 
-    private final IData dataDispose;
-    private final int objectBufferSize;
     private final Selector selector;
     private int emptySelects;
     private ServerSocketChannel serverChannel;
@@ -34,20 +33,13 @@ public class Server implements IThread {
     private volatile boolean shutdown;
     private Object updateLock = new Object();
     private Thread updateThread;
-    private ServerDiscoveryHandler discoveryHandler;
+    private UdpConfig udpConfig;
 
     public Server() {
-        this(UdpConstant.OBJECT_BUFFER_SIZE);
-    }
-
-    public Server(int objectBufferSize) {
-        this(objectBufferSize, IData.DEFAULT);
-    }
-
-    public Server(int objectBufferSize, IData dataDispose) {
-        this.objectBufferSize = objectBufferSize;
-        this.dataDispose = dataDispose;
-        this.discoveryHandler = ServerDiscoveryHandler.DEFAULT;
+        udpConfig = UdpConfig.getInstance();
+        udpConfig.setBufferSize(UdpConstant.OBJECT_BUFFER_SIZE);
+        udpConfig.setDataDispose(IData.DEFAULT);
+        udpConfig.setDiscoveryHandler(ServerDiscoveryHandler.DEFAULT);
         try {
             selector = Selector.open();
         } catch (IOException ex) {
@@ -55,8 +47,8 @@ public class Server implements IThread {
         }
     }
 
-    public void setDiscoveryHandler(ServerDiscoveryHandler newDiscoveryHandler) {
-        discoveryHandler = newDiscoveryHandler;
+    public UdpOperate getUdpOperate() {
+        return udpOperate;
     }
 
     public void bind(int udpPort) throws IOException {
@@ -69,7 +61,7 @@ public class Server implements IThread {
             selector.wakeup();
             try {
                 if (udpPort != null) {
-                    udpOperate = new UdpOperate(dataDispose, objectBufferSize);
+                    udpOperate = new UdpOperate(udpConfig.getDataDispose(), udpConfig.getBufferSize());
                     udpOperate.bind(selector, udpPort);
                     ViseLog.d("Accepting connections on port: " + udpPort + "/UDP");
                 }
@@ -191,7 +183,7 @@ public class Server implements IThread {
 
     @Override
     public IData getDataDispose() {
-        return dataDispose;
+        return udpConfig.getDataDispose();
     }
 
     @Override
