@@ -1,4 +1,6 @@
-package com.vise.udp.inter;
+package com.vise.udp.handler;
+
+import com.vise.udp.core.inter.IData;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -15,13 +17,13 @@ public interface ServerDiscoveryHandler {
         private ByteBuffer emptyBuffer = ByteBuffer.allocate(0);
 
         @Override
-        public boolean onDiscoverHost(DatagramChannel datagramChannel, InetSocketAddress fromAddress, IDataDispose
+        public boolean onDiscoverHost(DatagramChannel datagramChannel, InetSocketAddress fromAddress, IData
                 dataDispose) throws IOException {
             datagramChannel.send(emptyBuffer, fromAddress);
             return true;
         }
     };
 
-    boolean onDiscoverHost(DatagramChannel datagramChannel, InetSocketAddress fromAddress, IDataDispose dataDispose)
+    boolean onDiscoverHost(DatagramChannel datagramChannel, InetSocketAddress fromAddress, IData dataDispose)
             throws IOException;
 }

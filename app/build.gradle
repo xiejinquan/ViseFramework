@@ -26,6 +26,6 @@ dependencies {
     compile 'com.vise.xiaoyaoyou:viselog:1.0.0'
 
     compile project(':visetcp')
-//    compile project(':viseudp')
+    compile project(':viseudp')
     compile project(':viseutils')
 }

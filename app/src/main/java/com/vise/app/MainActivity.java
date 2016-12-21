@@ -17,7 +17,6 @@ import com.vise.tcp.TcpServer;
 import com.vise.tcp.listener.Listener;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             initTcpServer();
             initTcpClient();
+            initUdpServer();
+            initUdpClient();
         } catch (IOException e) {
             e.printStackTrace();
             ViseLog.e(e);
@@ -54,18 +55,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(mEdit_tcp.getText().toString() != null){
-                    try {
-                        tcpClient.getTcp().send(mEdit_tcp.getText().toString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        ViseLog.e(e);
+                    if(tcpFlag){
+                        try {
+                            tcpClient.getTcp().send(mEdit_tcp.getText().toString());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            ViseLog.e(e);
+                        }
+                    } else{
+                        Toast.makeText(mContext, "this is not connected!", Toast.LENGTH_SHORT).show();
+                        ViseLog.i("this is not connected!");
                     }
-//                    if(tcpFlag){
-//
-//                    } else{
-//                        Toast.makeText(mContext, "this is not connected!", Toast.LENGTH_SHORT).show();
-//                        ViseLog.i("this is not connected!");
-//                    }
                 } else{
                     Toast.makeText(mContext, "this input msg is null!", Toast.LENGTH_SHORT).show();
                     ViseLog.i("this input msg is null!");
@@ -75,9 +75,21 @@ public class MainActivity extends AppCompatActivity {
         mSend_udp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if(mEdit_udp.getText().toString() != null){
+                } else{
+                    Toast.makeText(mContext, "this input msg is null!", Toast.LENGTH_SHORT).show();
+                    ViseLog.i("this input msg is null!");
+                }
             }
         });
+    }
+
+    private void initUdpClient() {
+
+    }
+
+    private void initUdpServer() {
+
     }
 
     private void initTcpClient() {

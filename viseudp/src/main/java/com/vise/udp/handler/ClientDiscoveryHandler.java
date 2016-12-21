@@ -1,4 +1,4 @@
-package com.vise.udp.inter;
+package com.vise.udp.handler;
 
 import java.net.DatagramPacket;
 
