@@ -15,7 +15,6 @@ import java.net.InetSocketAddress;
 import java.nio.channels.CancelledKeyException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -28,7 +27,6 @@ public class Server implements IThread {
 
     private final Selector selector;
     private int emptySelects;
-    private ServerSocketChannel serverChannel;
     private UdpOperate udpOperate;
     private volatile boolean shutdown;
     private Object updateLock = new Object();
@@ -88,15 +86,6 @@ public class Server implements IThread {
 
     @Override
     public void close() {
-        if (serverChannel != null) {
-            try {
-                serverChannel.close();
-                ViseLog.i("Server closed.");
-            } catch (IOException ex) {
-                ViseLog.e("Unable to close server." + ex);
-            }
-            this.serverChannel = null;
-        }
         if (udpOperate != null) {
             udpOperate.close();
             udpOperate = null;
@@ -141,8 +130,35 @@ public class Server implements IThread {
                     keepAlive();
                     SelectionKey selectionKey = iter.next();
                     iter.remove();
-                    selectionKey.attachment();
+                    UdpOperate fromUdpOperate = (UdpOperate) selectionKey.attachment();
                     try {
+                        if (udpOperate == null) {
+                            selectionKey.channel().close();
+                            continue;
+                        }
+                        InetSocketAddress fromAddress;
+                        try {
+                            fromAddress = udpOperate.readFromAddress();
+                        } catch (IOException ex) {
+                            ViseLog.e("Error reading UDP data." + ex);
+                            continue;
+                        }
+                        if (fromAddress == null) continue;
+                        PacketBuffer packetBuffer;
+                        try {
+                            int ops = selectionKey.readyOps();
+                            if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
+                                packetBuffer = udpOperate.readPacketBuffer();
+                                ViseLog.d(this + " received UDP: " + packetBuffer);
+                            }
+                        } catch (IOException ex) {
+                            if (fromUdpOperate != null) {
+                                ViseLog.e("Error reading UDP from connection: " + fromUdpOperate + ex);
+                            } else {
+                                ViseLog.e("Error reading UDP from unregistered address: " + fromAddress + ex);
+                            }
+                            continue;
+                        }
                     } catch (CancelledKeyException ex) {
                         selectionKey.channel().close();
                     }

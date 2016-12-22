@@ -29,22 +29,24 @@ public interface IData {
 
         @Override
         public PacketBuffer read(UdpOperate udpOperate, ByteBuffer buffer) {
-            return null;
+            PacketBuffer packetBuffer = new PacketBuffer();
+            packetBuffer.setByteBuffer(buffer);
+            return packetBuffer;
         }
 
         @Override
         public int getLengthLength() {
-            return 0;
+            return 4;
         }
 
         @Override
         public void writeLength(ByteBuffer buffer, int length) {
-
+            buffer.putInt(length);
         }
 
         @Override
         public int readLength(ByteBuffer buffer) {
-            return 0;
+            return buffer.getInt();
         }
     };
 }

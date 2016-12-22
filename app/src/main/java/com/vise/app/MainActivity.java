@@ -15,8 +15,15 @@ import com.vise.tcp.TcpClient;
 import com.vise.tcp.TcpConnection;
 import com.vise.tcp.TcpServer;
 import com.vise.tcp.listener.Listener;
+import com.vise.udp.ViseUdp;
+import com.vise.udp.command.DiscoverHost;
+import com.vise.udp.core.UdpOperate;
+import com.vise.udp.core.inter.IListener;
+import com.vise.udp.exception.UdpException;
+import com.vise.udp.mode.PacketBuffer;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,11 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText mEdit_udp;
     private Button mSend_udp;
     private TextView mShow_msg;
-
-    private TcpClient tcpClient;
-    private TcpServer tcpServer;
-
-    private boolean tcpFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private void init() {
         bindViews();
         try {
+            ViseUdp.getInstance().getUdpConfig().setIp("172.26.183.4").setPort(8888);
             initTcpServer();
             initTcpClient();
             initUdpServer();
@@ -55,17 +58,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(mEdit_tcp.getText().toString() != null){
-                    if(tcpFlag){
-                        try {
-                            tcpClient.getTcp().send(mEdit_tcp.getText().toString());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            ViseLog.e(e);
-                        }
-                    } else{
-                        Toast.makeText(mContext, "this is not connected!", Toast.LENGTH_SHORT).show();
-                        ViseLog.i("this is not connected!");
-                    }
                 } else{
                     Toast.makeText(mContext, "this input msg is null!", Toast.LENGTH_SHORT).show();
                     ViseLog.i("this input msg is null!");
@@ -76,6 +68,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(mEdit_udp.getText().toString() != null){
+                    final PacketBuffer packetBuffer = new PacketBuffer();
+                    packetBuffer.setCommand(new DiscoverHost());
+                        new Thread(){
+                            @Override
+                            public void run() {
+                                try {
+                                    ViseUdp.getInstance().getClient().getUdpOperate().send(packetBuffer);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }.start();
                 } else{
                     Toast.makeText(mContext, "this input msg is null!", Toast.LENGTH_SHORT).show();
                     ViseLog.i("this input msg is null!");
@@ -84,90 +88,83 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initUdpClient() {
-
-    }
-
-    private void initUdpServer() {
-
-    }
-
     private void initTcpClient() {
-        tcpClient = new TcpClient();
-        tcpClient.addListener(new Listener(){
+
+    }
+
+    private void initTcpServer() {
+
+    }
+
+    private void initUdpClient() throws IOException {
+        ViseUdp.getInstance().addClientListener(new IListener() {
             @Override
-            public void connected(TcpConnection connection) {
-                ViseLog.i("TcpClient connected");
-                Toast.makeText(mContext, "connect success!", Toast.LENGTH_SHORT).show();
-                tcpFlag = true;
+            public void onStart(UdpOperate udpOperate) {
+
             }
 
             @Override
-            public void disconnected(TcpConnection connection) {
-                ViseLog.i("TcpClient disconnected");
+            public void onStop(UdpOperate udpOperate) {
+
             }
 
             @Override
-            public void received(TcpConnection connection, Object object) {
-                ViseLog.i("TcpClient received");
-                ViseLog.i(object);
-                if(object != null){
-                    mShow_msg.setText(object.toString());
-                }
+            public void onSend(UdpOperate udpOperate, PacketBuffer packetBuffer) {
+                ViseLog.i(packetBuffer);
             }
 
             @Override
-            public void idle(TcpConnection connection) {
-                ViseLog.i("TcpClient idle");
+            public void onReceive(UdpOperate udpOperate, PacketBuffer packetBuffer) {
+                ViseLog.i(packetBuffer);
+            }
+
+            @Override
+            public void onError(UdpOperate udpOperate, UdpException e) {
+                ViseLog.i(e);
             }
         });
-        tcpClient.start();
-        new Handler().postDelayed(new Runnable() {
+        ViseUdp.getInstance().startClient();
+        new Thread(){
             @Override
             public void run() {
-                new Thread("Connect") {
-                    public void run () {
-                        try {
-                            tcpClient.connect(10000, "172.26.183.4", 8888);
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                            ViseLog.e(ex);
-                        }
-                    }
-                }.start();
-            }
-        }, 3000);
-    }
-
-    private void initTcpServer() throws IOException {
-        tcpServer = new TcpServer();
-        tcpServer.addListener(new Listener(){
-            @Override
-            public void connected(TcpConnection connection) {
-                ViseLog.i("TcpServer connected");
-            }
-
-            @Override
-            public void disconnected(TcpConnection connection) {
-                ViseLog.i("TcpServer disconnected");
-            }
-
-            @Override
-            public void received(TcpConnection connection, Object object) {
-                ViseLog.i("TcpServer received");
-                ViseLog.i(object);
-                if(object != null){
-                    mShow_msg.setText(object.toString());
+                try {
+                    ViseUdp.getInstance().connect();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
+        }.start();
+    }
+
+    private void initUdpServer() throws IOException {
+        ViseUdp.getInstance().addServerListener(new IListener() {
+            @Override
+            public void onStart(UdpOperate udpOperate) {
+
+            }
 
             @Override
-            public void idle(TcpConnection connection) {
-                ViseLog.i("TcpServer idle");
+            public void onStop(UdpOperate udpOperate) {
+
+            }
+
+            @Override
+            public void onSend(UdpOperate udpOperate, PacketBuffer packetBuffer) {
+                ViseLog.i(packetBuffer);
+            }
+
+            @Override
+            public void onReceive(UdpOperate udpOperate, PacketBuffer packetBuffer) {
+                ViseLog.i(packetBuffer);
+            }
+
+            @Override
+            public void onError(UdpOperate udpOperate, UdpException e) {
+                ViseLog.i(e);
             }
         });
-        tcpServer.bind(8888);
-        tcpServer.start();
+        ViseUdp.getInstance().bindServer();
+        ViseUdp.getInstance().startServer();
     }
 
     private void bindViews() {

@@ -51,6 +51,7 @@ public class UdpOperate {
             datagramChannel.socket().bind(localPort);
             datagramChannel.configureBlocking(false);//设置为非阻塞
             selectionKey = datagramChannel.register(selector, SelectionKey.OP_READ);
+            selectionKey.attach(this);
             lastCommunicationTime = System.currentTimeMillis();
         } catch (IOException ex) {
             close();
@@ -68,6 +69,7 @@ public class UdpOperate {
             datagramChannel.socket().connect(remoteAddress);
             datagramChannel.configureBlocking(false);//设置为非阻塞
             selectionKey = datagramChannel.register(selector, SelectionKey.OP_READ);
+            selectionKey.attach(this);
             lastCommunicationTime = System.currentTimeMillis();
             connectedAddress = remoteAddress;
         } catch (IOException ex) {
@@ -93,8 +95,10 @@ public class UdpOperate {
                 if (readBuffer.hasRemaining())
                     throw new IOException("Incorrect number of bytes (" + readBuffer.remaining()
                             + " remaining) used to deserialize object: " + packetBuffer);
+                notifyReceiveListener(packetBuffer);
                 return packetBuffer;
             } catch (Exception ex) {
+                notifyErrorListener(new UdpException().setException(ex));
                 throw new IOException("Error during deserialization.", ex);
             }
         } finally {
@@ -108,9 +112,11 @@ public class UdpOperate {
         synchronized (writeLock) {
             try {
                 try {
+                    notifySendListener(packetBuffer);
                     packetBuffer.setByteBuffer(writeBuffer);
                     dataDispose.write(this, packetBuffer);
                 } catch (Exception ex) {
+                    notifyErrorListener(new UdpException().setException(ex));
                     throw new IOException("Error serializing object of type: " + packetBuffer.getClass().getName(), ex);
                 }
                 writeBuffer.flip();

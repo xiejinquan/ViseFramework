@@ -179,6 +179,10 @@ public class Client implements IThread {
                     try {
                         int ops = selectionKey.readyOps();
                         if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
+                            if (udpOperate.readFromAddress() == null) continue;
+                            PacketBuffer packetBuffer = udpOperate.readPacketBuffer();
+                            if (packetBuffer == null) continue;
+                            ViseLog.d(this + " received UDP: " + packetBuffer);
                         }
                     } catch (CancelledKeyException ignored) {
                         // Connection is closed.

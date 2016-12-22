@@ -16,24 +16,27 @@ public class UdpException implements Serializable {
         return exceptionCode;
     }
 
-    public void setExceptionCode(int exceptionCode) {
+    public UdpException setExceptionCode(int exceptionCode) {
         this.exceptionCode = exceptionCode;
+        return this;
     }
 
     public String getExceptionMsg() {
         return exceptionMsg;
     }
 
-    public void setExceptionMsg(String exceptionMsg) {
+    public UdpException setExceptionMsg(String exceptionMsg) {
         this.exceptionMsg = exceptionMsg;
+        return this;
     }
 
     public Exception getException() {
         return exception;
     }
 
-    public void setException(Exception exception) {
+    public UdpException setException(Exception exception) {
         this.exception = exception;
+        return this;
     }
 
     @Override
