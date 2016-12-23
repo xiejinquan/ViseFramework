@@ -136,7 +136,7 @@ public class Server implements IThread {
                     keepAlive();
                     SelectionKey selectionKey = iter.next();
                     iter.remove();
-                    UdpOperate fromUdpOperate = (UdpOperate) selectionKey.attachment();
+                    Connection fromConnection = (Connection) selectionKey.attachment();
                     try {
                         if (udpOperate == null) {
                             selectionKey.channel().close();
@@ -154,12 +154,12 @@ public class Server implements IThread {
                         try {
                             int ops = selectionKey.readyOps();
                             if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
-                                packetBuffer = udpOperate.readPacketBuffer();
+                                packetBuffer = udpOperate.readPacketBuffer(fromConnection);
                                 ViseLog.d(this + " received UDP: " + packetBuffer);
                             }
                         } catch (IOException ex) {
-                            if (fromUdpOperate != null) {
-                                ViseLog.e("Error reading UDP from connection: " + fromUdpOperate + ex);
+                            if (fromConnection != null) {
+                                ViseLog.e("Error reading UDP from connection: " + fromConnection + ex);
                             } else {
                                 ViseLog.e("Error reading UDP from unregistered address: " + fromAddress + ex);
                             }
@@ -178,24 +178,24 @@ public class Server implements IThread {
         if (udpOperate != null && udpOperate.needsKeepAlive(time)) {
             PacketBuffer packetBuffer = new PacketBuffer();
             packetBuffer.setCommand(new KeepAlive());
-            udpOperate.send(packetBuffer);
+//            udpOperate.send(packetBuffer);
         }
     }
 
     @Override
     public void addListener(IListener listener) {
-        if (udpOperate != null) {
+        /*if (udpOperate != null) {
             udpOperate.addListener(listener);
             ViseLog.d("Server listener added.");
-        }
+        }*/
     }
 
     @Override
     public void removeListener(IListener listener) {
-        if (udpOperate != null) {
+        /*if (udpOperate != null) {
             udpOperate.removeListener(listener);
             ViseLog.d("Server listener removed.");
-        }
+        }*/
     }
 
     @Override

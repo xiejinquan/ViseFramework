@@ -1,6 +1,6 @@
 package com.vise.udp.core.inter;
 
-import com.vise.udp.core.UdpOperate;
+import com.vise.udp.core.Connection;
 import com.vise.udp.exception.UdpException;
 import com.vise.udp.mode.PacketBuffer;
 
@@ -10,13 +10,13 @@ import com.vise.udp.mode.PacketBuffer;
  * @date: 2016-12-21 16:23
  */
 public interface IListener {
-    void onStart(UdpOperate udpOperate);
+    void onStart(Connection connection);
 
-    void onStop(UdpOperate udpOperate);
+    void onStop(Connection connection);
 
-    void onSend(UdpOperate udpOperate, PacketBuffer packetBuffer);
+    void onSend(Connection connection, PacketBuffer packetBuffer);
 
-    void onReceive(UdpOperate udpOperate, PacketBuffer packetBuffer);
+    void onReceive(Connection connection, PacketBuffer packetBuffer);
 
-    void onError(UdpOperate udpOperate, UdpException e);
+    void onError(Connection connection, UdpException e);
 }

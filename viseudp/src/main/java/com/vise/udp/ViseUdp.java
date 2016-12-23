@@ -62,7 +62,7 @@ public class ViseUdp {
     }
 
     public ViseUdp send(PacketBuffer packetBuffer) throws IOException {
-        client.getUdpOperate().send(packetBuffer);
+        client.send(packetBuffer);
         return instance;
     }
 
