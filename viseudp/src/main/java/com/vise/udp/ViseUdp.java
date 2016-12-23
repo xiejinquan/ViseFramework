@@ -17,6 +17,7 @@ public class ViseUdp {
 
     private static ViseUdp instance;
     private UdpConfig udpConfig = UdpConfig.getInstance();
+    private IListener clientListener, serverListener;
     private Client client;
     private Server server;
 
@@ -40,17 +41,17 @@ public class ViseUdp {
         server = new Server();
     }
 
-    public ViseUdp send(PacketBuffer packetBuffer) throws IOException {
-        client.getUdpOperate().send(packetBuffer);
-        return instance;
-    }
-
-    public ViseUdp startClient() {
+    public ViseUdp startClient(IListener listener) throws IOException {
+        this.clientListener = listener;
         client.start();
+        client.addListener(listener);
         return instance;
     }
 
-    public ViseUdp startServer() {
+    public ViseUdp startServer(IListener listener) throws IOException {
+        this.serverListener = listener;
+        server.addListener(listener);
+        server.bind(udpConfig.getPort());
         server.start();
         return instance;
     }
@@ -60,28 +61,16 @@ public class ViseUdp {
         return instance;
     }
 
-    public ViseUdp bindServer() throws IOException {
-        server.bind(udpConfig.getPort());
+    public ViseUdp send(PacketBuffer packetBuffer) throws IOException {
+        client.getUdpOperate().send(packetBuffer);
         return instance;
     }
 
-    public ViseUdp addClientListener(IListener listener){
-        client.addListener(listener);
-        return instance;
-    }
-
-    public ViseUdp addServerListener(IListener listener){
-        server.addListener(listener);
-        return instance;
-    }
-
-    public ViseUdp removeClientListener(IListener listener){
-        client.removeListener(listener);
-        return instance;
-    }
-
-    public ViseUdp removeServerListener(IListener listener){
-        server.removeListener(listener);
+    public ViseUdp stop(){
+        server.removeListener(serverListener);
+        client.removeListener(clientListener);
+        server.stop();
+        client.stop();
         return instance;
     }
 
