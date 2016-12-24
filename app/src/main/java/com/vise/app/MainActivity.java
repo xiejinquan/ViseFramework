@@ -2,7 +2,6 @@ package com.vise.app;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -11,20 +10,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vise.log.ViseLog;
-import com.vise.tcp.TcpClient;
-import com.vise.tcp.TcpConnection;
-import com.vise.tcp.TcpServer;
-import com.vise.tcp.listener.Listener;
 import com.vise.udp.ViseUdp;
 import com.vise.udp.command.DiscoverHost;
 import com.vise.udp.core.Connection;
-import com.vise.udp.core.UdpOperate;
 import com.vise.udp.core.inter.IListener;
 import com.vise.udp.exception.UdpException;
 import com.vise.udp.mode.PacketBuffer;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,10 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         bindViews();
-<<<<<<< HEAD
-=======
-        ViseUdp.getInstance().getUdpConfig().setIp("192.168.1.106").setPort(8888);
->>>>>>> a7646a2d60ebe24e831c69b38080470f1b74afd5
         try {
             ViseUdp.getInstance().getUdpConfig().setIp("172.26.183.4").setPort(8888);
             initTcpServer();
@@ -78,11 +67,7 @@ public class MainActivity extends AppCompatActivity {
                         new Thread(){
                             @Override
                             public void run() {
-                                try {
-                                    ViseUdp.getInstance().getClient().getUdpOperate().send(packetBuffer);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                                ViseUdp.getInstance().getClient().send(packetBuffer);
                             }
                         }.start();
                 } else{
