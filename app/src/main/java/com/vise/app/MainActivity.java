@@ -44,39 +44,60 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         bindViews();
-        ViseUdp.getInstance().getUdpConfig().setIp("172.26.183.4").setPort(8888);
         try {
+            ViseUdp.getInstance().getUdpConfig().setIp("172.26.183.4").setPort(8888);
+            initTcpServer();
+            initTcpClient();
             initUdpServer();
             initUdpClient();
         } catch (IOException e) {
             e.printStackTrace();
+            ViseLog.e(e);
         }
         mSend_tcp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mEdit_tcp.getText().toString() != null){
+                } else{
+                    Toast.makeText(mContext, "this input msg is null!", Toast.LENGTH_SHORT).show();
+                    ViseLog.i("this input msg is null!");
+                }
             }
         });
         mSend_udp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final PacketBuffer packetBuffer = new PacketBuffer();
-                packetBuffer.setCommand(new DiscoverHost());
-                    new Thread(){
-                        @Override
-                        public void run() {
-                            try {
-                                ViseUdp.getInstance().send(packetBuffer);
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                if(mEdit_udp.getText().toString() != null){
+                    final PacketBuffer packetBuffer = new PacketBuffer();
+                    packetBuffer.setCommand(new DiscoverHost());
+                        new Thread(){
+                            @Override
+                            public void run() {
+                                try {
+                                    ViseUdp.getInstance().getClient().getUdpOperate().send(packetBuffer);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                    }.start();
+                        }.start();
+                } else{
+                    Toast.makeText(mContext, "this input msg is null!", Toast.LENGTH_SHORT).show();
+                    ViseLog.i("this input msg is null!");
+                }
             }
         });
     }
 
+    private void initTcpClient() {
+
+    }
+
+    private void initTcpServer() {
+
+    }
+
     private void initUdpClient() throws IOException {
-        ViseUdp.getInstance().startClient(new IListener() {
+        ViseUdp.getInstance().addClientListener(new IListener() {
             @Override
             public void onStart(UdpOperate udpOperate) {
 
@@ -102,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 ViseLog.i(e);
             }
         });
+        ViseUdp.getInstance().startClient();
         new Thread(){
             @Override
             public void run() {
@@ -115,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initUdpServer() throws IOException {
-        ViseUdp.getInstance().startServer(new IListener() {
+        ViseUdp.getInstance().addServerListener(new IListener() {
             @Override
             public void onStart(UdpOperate udpOperate) {
 
@@ -141,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
                 ViseLog.i(e);
             }
         });
+        ViseUdp.getInstance().bindServer();
+        ViseUdp.getInstance().startServer();
     }
 
     private void bindViews() {
@@ -151,9 +175,4 @@ public class MainActivity extends AppCompatActivity {
         mShow_msg = (TextView) findViewById(R.id.show_msg);
     }
 
-    @Override
-    protected void onDestroy() {
-        ViseUdp.getInstance().stop();
-        super.onDestroy();
-    }
 }
