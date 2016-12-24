@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/visebase" />
             <option value="$PROJECT_DIR$/viseble" />
             <option value="$PROJECT_DIR$/viselog" />
             <option value="$PROJECT_DIR$/visetcp" />
@@ -20,6 +21,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/visebase" />
             <option value="$PROJECT_DIR$/viseble" />
             <option value="$PROJECT_DIR$/viselog" />
             <option value="$PROJECT_DIR$/visetcp" />

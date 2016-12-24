@@ -17,6 +17,7 @@ import com.vise.tcp.TcpServer;
 import com.vise.tcp.listener.Listener;
 import com.vise.udp.ViseUdp;
 import com.vise.udp.command.DiscoverHost;
+import com.vise.udp.core.Connection;
 import com.vise.udp.core.UdpOperate;
 import com.vise.udp.core.inter.IListener;
 import com.vise.udp.exception.UdpException;
@@ -44,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         bindViews();
+<<<<<<< HEAD
+=======
+        ViseUdp.getInstance().getUdpConfig().setIp("192.168.1.106").setPort(8888);
+>>>>>>> a7646a2d60ebe24e831c69b38080470f1b74afd5
         try {
             ViseUdp.getInstance().getUdpConfig().setIp("172.26.183.4").setPort(8888);
             initTcpServer();
@@ -99,27 +104,27 @@ public class MainActivity extends AppCompatActivity {
     private void initUdpClient() throws IOException {
         ViseUdp.getInstance().addClientListener(new IListener() {
             @Override
-            public void onStart(UdpOperate udpOperate) {
+            public void onStart(Connection connection) {
 
             }
 
             @Override
-            public void onStop(UdpOperate udpOperate) {
+            public void onStop(Connection connection) {
 
             }
 
             @Override
-            public void onSend(UdpOperate udpOperate, PacketBuffer packetBuffer) {
+            public void onSend(Connection connection, PacketBuffer packetBuffer) {
                 ViseLog.i(packetBuffer);
             }
 
             @Override
-            public void onReceive(UdpOperate udpOperate, PacketBuffer packetBuffer) {
+            public void onReceive(Connection connection, PacketBuffer packetBuffer) {
                 ViseLog.i(packetBuffer);
             }
 
             @Override
-            public void onError(UdpOperate udpOperate, UdpException e) {
+            public void onError(Connection connection, UdpException e) {
                 ViseLog.i(e);
             }
         });
@@ -139,27 +144,33 @@ public class MainActivity extends AppCompatActivity {
     private void initUdpServer() throws IOException {
         ViseUdp.getInstance().addServerListener(new IListener() {
             @Override
-            public void onStart(UdpOperate udpOperate) {
+            public void onStart(Connection connection) {
 
             }
 
             @Override
-            public void onStop(UdpOperate udpOperate) {
+            public void onStop(Connection connection) {
 
             }
 
             @Override
-            public void onSend(UdpOperate udpOperate, PacketBuffer packetBuffer) {
+            public void onSend(Connection connection, PacketBuffer packetBuffer) {
                 ViseLog.i(packetBuffer);
             }
 
             @Override
-            public void onReceive(UdpOperate udpOperate, PacketBuffer packetBuffer) {
+            public void onReceive(Connection connection, final PacketBuffer packetBuffer) {
                 ViseLog.i(packetBuffer);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mShow_msg.setText(packetBuffer.toString());
+                    }
+                });
             }
 
             @Override
-            public void onError(UdpOperate udpOperate, UdpException e) {
+            public void onError(Connection connection, UdpException e) {
                 ViseLog.i(e);
             }
         });

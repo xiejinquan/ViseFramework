@@ -1,6 +1,8 @@
 package com.vise.udp.core.inter;
 
 import com.vise.udp.core.UdpOperate;
+import com.vise.udp.command.Command;
+import com.vise.udp.core.Connection;
 import com.vise.udp.mode.PacketBuffer;
 
 import java.nio.ByteBuffer;
@@ -11,9 +13,9 @@ import java.nio.ByteBuffer;
  * @date: 2016-12-21 16:28
  */
 public interface IData {
-    void write(UdpOperate udpOperate, PacketBuffer packetBuffer);
+    void write(Connection connection, PacketBuffer packetBuffer);
 
-    PacketBuffer read(UdpOperate udpOperate, ByteBuffer buffer);
+    PacketBuffer read(Connection connection, ByteBuffer buffer);
 
     int getLengthLength();
 
@@ -23,12 +25,12 @@ public interface IData {
 
     IData DEFAULT = new IData() {
         @Override
-        public void write(UdpOperate udpOperate, PacketBuffer packetBuffer) {
+        public void write(Connection connection, PacketBuffer packetBuffer) {
 
         }
 
         @Override
-        public PacketBuffer read(UdpOperate udpOperate, ByteBuffer buffer) {
+        public PacketBuffer read(Connection connection, ByteBuffer buffer) {
             PacketBuffer packetBuffer = new PacketBuffer();
             packetBuffer.setByteBuffer(buffer);
             return packetBuffer;

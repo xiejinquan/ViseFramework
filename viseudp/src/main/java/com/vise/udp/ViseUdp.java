@@ -40,11 +40,6 @@ public class ViseUdp {
         server = new Server();
     }
 
-    public ViseUdp send(PacketBuffer packetBuffer) throws IOException {
-        client.getUdpOperate().send(packetBuffer);
-        return instance;
-    }
-
     public ViseUdp startClient() {
         client.start();
         return instance;
@@ -75,8 +70,8 @@ public class ViseUdp {
         return instance;
     }
 
-    public ViseUdp removeClientListener(IListener listener){
-        client.removeListener(listener);
+    public ViseUdp send(PacketBuffer packetBuffer) throws IOException {
+        client.send(packetBuffer);
         return instance;
     }
 

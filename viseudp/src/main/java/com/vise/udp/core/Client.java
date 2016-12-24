@@ -34,9 +34,8 @@ import java.util.Set;
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2016-12-21 16:17
  */
-public class Client implements IThread {
+public class Client extends Connection implements IThread {
 
-    private UdpOperate udpOperate;
     private Selector selector;
     private int emptySelects;
     private volatile boolean shutdown;
@@ -65,10 +64,6 @@ public class Client implements IThread {
         } catch (IOException ex) {
             throw new RuntimeException("Error opening selector.", ex);
         }
-    }
-
-    public UdpOperate getUdpOperate() {
-        return udpOperate;
     }
 
     public void connect(String host, int udpPort) throws IOException {
@@ -119,10 +114,10 @@ public class Client implements IThread {
     @Override
     public void stop() {
         if (shutdown) return;
-        close();
-        ViseLog.d("Client thread stopping.");
         shutdown = true;
         selector.wakeup();
+        close();
+        ViseLog.d("Client thread stopping.");
     }
 
     @Override
@@ -180,7 +175,7 @@ public class Client implements IThread {
                         int ops = selectionKey.readyOps();
                         if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
                             if (udpOperate.readFromAddress() == null) continue;
-                            PacketBuffer packetBuffer = udpOperate.readPacketBuffer();
+                            PacketBuffer packetBuffer = udpOperate.readPacketBuffer(this);
                             if (packetBuffer == null) continue;
                             ViseLog.d(this + " received UDP: " + packetBuffer);
                         }
@@ -197,23 +192,19 @@ public class Client implements IThread {
         if (udpOperate != null && udpOperate.needsKeepAlive(time)) {
             PacketBuffer packetBuffer = new PacketBuffer();
             packetBuffer.setCommand(new KeepAlive());
-            udpOperate.send(packetBuffer);
+            send(packetBuffer);
         }
     }
 
     @Override
     public void addListener(IListener listener) {
-        if (udpOperate != null) {
-            udpOperate.addListener(listener);
-        }
+        super.addListener(listener);
         ViseLog.d("Client listener added.");
     }
 
     @Override
     public void removeListener(IListener listener) {
-        if (udpOperate != null) {
-            udpOperate.removeListener(listener);
-        }
+        super.removeListener(listener);
         ViseLog.d("Client listener removed.");
     }
 

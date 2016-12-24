@@ -3,19 +3,16 @@ package com.vise.udp.core;
 import com.vise.log.ViseLog;
 import com.vise.udp.common.UdpConstant;
 import com.vise.udp.core.inter.IData;
-import com.vise.udp.core.inter.IListener;
-import com.vise.udp.exception.UdpException;
 import com.vise.udp.mode.PacketBuffer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @Description:
@@ -24,8 +21,6 @@ import java.util.List;
  */
 public class UdpOperate {
 
-    private int id;
-    private String name;
     private InetSocketAddress connectedAddress;
     private DatagramChannel datagramChannel;
     private SelectionKey selectionKey;
@@ -34,7 +29,7 @@ public class UdpOperate {
     private final IData dataDispose;
     private final Object writeLock = new Object();
     private long lastCommunicationTime;
-    private List<IListener> listenerList = new ArrayList<>();
+
 
     public UdpOperate(IData dataDispose, int bufferSize) {
         this.dataDispose = dataDispose;
@@ -87,18 +82,16 @@ public class UdpOperate {
         return (InetSocketAddress) datagramChannel.receive(readBuffer);
     }
 
-    public PacketBuffer readPacketBuffer() throws IOException {
+    public PacketBuffer readPacketBuffer(Connection connection) throws IOException {
         readBuffer.flip();
         try {
             try {
-                PacketBuffer packetBuffer = dataDispose.read(this, readBuffer);
+                PacketBuffer packetBuffer = dataDispose.read(connection, readBuffer);
                 if (readBuffer.hasRemaining())
                     throw new IOException("Incorrect number of bytes (" + readBuffer.remaining()
                             + " remaining) used to deserialize object: " + packetBuffer);
-                notifyReceiveListener(packetBuffer);
                 return packetBuffer;
             } catch (Exception ex) {
-                notifyErrorListener(new UdpException().setException(ex));
                 throw new IOException("Error during deserialization.", ex);
             }
         } finally {
@@ -106,22 +99,20 @@ public class UdpOperate {
         }
     }
 
-    public int send(PacketBuffer packetBuffer) throws IOException {
+    public int send(Connection connection, PacketBuffer packetBuffer, SocketAddress address) throws IOException {
         if (packetBuffer == null) throw new IllegalArgumentException("packetBuffer cannot be null.");
-        if (datagramChannel == null || connectedAddress == null) throw new SocketException("Connection is closed.");
+        if (datagramChannel == null || address == null) throw new SocketException("Connection is closed.");
         synchronized (writeLock) {
             try {
                 try {
-                    notifySendListener(packetBuffer);
                     packetBuffer.setByteBuffer(writeBuffer);
-                    dataDispose.write(this, packetBuffer);
+                    dataDispose.write(connection, packetBuffer);
                 } catch (Exception ex) {
-                    notifyErrorListener(new UdpException().setException(ex));
                     throw new IOException("Error serializing object of type: " + packetBuffer.getClass().getName(), ex);
                 }
                 writeBuffer.flip();
                 int length = writeBuffer.limit();
-                datagramChannel.send(writeBuffer, connectedAddress);
+                datagramChannel.send(writeBuffer, address);
                 lastCommunicationTime = System.currentTimeMillis();
                 boolean wasFullWrite = !writeBuffer.hasRemaining();
                 return wasFullWrite ? length : -1;
@@ -146,73 +137,6 @@ public class UdpOperate {
 
     public boolean needsKeepAlive(long time) {
         return connectedAddress != null && keepAliveMillis > 0 && time - lastCommunicationTime > keepAliveMillis;
-    }
-
-    public void addListener(IListener listener) {
-        if (listenerList.contains(listener)) {
-            return;
-        }
-        this.listenerList.add(listener);
-    }
-
-    public void removeListener(IListener listener) {
-        this.listenerList.remove(listener);
-    }
-
-    private void notifyReceiveListener(final PacketBuffer packetBuffer) {
-        for (IListener listener : listenerList) {
-            if (listener != null) {
-                listener.onReceive(this, packetBuffer);
-            }
-        }
-    }
-
-    private void notifyStartListener() {
-        for (IListener listener : listenerList) {
-            if (listener != null) {
-                listener.onStart(this);
-            }
-        }
-    }
-
-    private void notifyStopListener() {
-        for (IListener listener : listenerList) {
-            if (listener != null) {
-                listener.onStop(this);
-            }
-        }
-    }
-
-    private void notifySendListener(final PacketBuffer packetBuffer) {
-        for (IListener listener : listenerList) {
-            if (listener != null) {
-                listener.onSend(this, packetBuffer);
-            }
-        }
-    }
-
-    private void notifyErrorListener(final UdpException e) {
-        for (IListener listener : listenerList) {
-            if (listener != null) {
-                listener.onError(this, e);
-            }
-        }
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public InetSocketAddress getConnectedAddress() {

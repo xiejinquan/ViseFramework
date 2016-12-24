@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ViseFramework.iml" filepath="$PROJECT_DIR$/ViseFramework.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/visebase/visebase.iml" filepath="$PROJECT_DIR$/visebase/visebase.iml" />
       <module fileurl="file://$PROJECT_DIR$/viseble/viseble.iml" filepath="$PROJECT_DIR$/viseble/viseble.iml" />
       <module fileurl="file://$PROJECT_DIR$/viselog/viselog.iml" filepath="$PROJECT_DIR$/viselog/viselog.iml" />
       <module fileurl="file://$PROJECT_DIR$/visetcp/visetcp.iml" filepath="$PROJECT_DIR$/visetcp/visetcp.iml" />
