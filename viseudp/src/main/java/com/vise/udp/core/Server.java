@@ -1,6 +1,7 @@
 package com.vise.udp.core;
 
 import com.vise.log.ViseLog;
+import com.vise.udp.ViseUdp;
 import com.vise.udp.command.KeepAlive;
 import com.vise.udp.common.UdpConstant;
 import com.vise.udp.config.UdpConfig;
@@ -35,11 +36,18 @@ public class Server implements IThread {
 
     public Server() {
         udpConfig = UdpConfig.getInstance();
-        udpConfig.setBufferSize(UdpConstant.OBJECT_BUFFER_SIZE);
-        udpConfig.setDataDispose(IData.DEFAULT);
-        udpConfig.setDiscoveryHandler(ServerDiscoveryHandler.DEFAULT);
+        if (udpConfig.getDataDispose() == null) {
+            udpConfig.setDataDispose(IData.DEFAULT);
+        }
+        if(udpConfig.getBufferSize() == 0){
+            udpConfig.setBufferSize(UdpConstant.OBJECT_BUFFER_SIZE);
+        }
+        if(udpConfig.getServerDiscoveryHandler() == null){
+            udpConfig.setDiscoveryHandler(ServerDiscoveryHandler.DEFAULT);
+        }
         try {
             selector = Selector.open();
+            udpOperate = new UdpOperate(udpConfig.getDataDispose(), udpConfig.getBufferSize());
         } catch (IOException ex) {
             throw new RuntimeException("Error opening selector.", ex);
         }
@@ -59,7 +67,6 @@ public class Server implements IThread {
             selector.wakeup();
             try {
                 if (udpPort != null) {
-                    udpOperate = new UdpOperate(udpConfig.getDataDispose(), udpConfig.getBufferSize());
                     udpOperate.bind(selector, udpPort);
                     ViseLog.d("Accepting connections on port: " + udpPort + "/UDP");
                 }
@@ -79,16 +86,15 @@ public class Server implements IThread {
     @Override
     public void stop() {
         if (shutdown) return;
+        shutdown = true;
         close();
         ViseLog.d("Server thread stopping.");
-        shutdown = true;
     }
 
     @Override
     public void close() {
         if (udpOperate != null) {
             udpOperate.close();
-            udpOperate = null;
         }
         synchronized (updateLock) {
         }
@@ -180,16 +186,16 @@ public class Server implements IThread {
     public void addListener(IListener listener) {
         if (udpOperate != null) {
             udpOperate.addListener(listener);
+            ViseLog.d("Server listener added.");
         }
-        ViseLog.d("Server listener added.");
     }
 
     @Override
     public void removeListener(IListener listener) {
         if (udpOperate != null) {
             udpOperate.removeListener(listener);
+            ViseLog.d("Server listener removed.");
         }
-        ViseLog.d("Server listener removed.");
     }
 
     @Override

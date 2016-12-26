@@ -44,60 +44,39 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         bindViews();
+        ViseUdp.getInstance().getUdpConfig().setIp("192.168.1.106").setPort(8888);
         try {
-            ViseUdp.getInstance().getUdpConfig().setIp("172.26.183.4").setPort(8888);
-            initTcpServer();
-            initTcpClient();
             initUdpServer();
             initUdpClient();
         } catch (IOException e) {
             e.printStackTrace();
-            ViseLog.e(e);
         }
         mSend_tcp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mEdit_tcp.getText().toString() != null){
-                } else{
-                    Toast.makeText(mContext, "this input msg is null!", Toast.LENGTH_SHORT).show();
-                    ViseLog.i("this input msg is null!");
-                }
             }
         });
         mSend_udp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mEdit_udp.getText().toString() != null){
-                    final PacketBuffer packetBuffer = new PacketBuffer();
-                    packetBuffer.setCommand(new DiscoverHost());
-                        new Thread(){
-                            @Override
-                            public void run() {
-                                try {
-                                    ViseUdp.getInstance().getClient().getUdpOperate().send(packetBuffer);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                final PacketBuffer packetBuffer = new PacketBuffer();
+                packetBuffer.setCommand(new DiscoverHost());
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            try {
+                                ViseUdp.getInstance().send(packetBuffer);
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        }.start();
-                } else{
-                    Toast.makeText(mContext, "this input msg is null!", Toast.LENGTH_SHORT).show();
-                    ViseLog.i("this input msg is null!");
-                }
+                        }
+                    }.start();
             }
         });
     }
 
-    private void initTcpClient() {
-
-    }
-
-    private void initTcpServer() {
-
-    }
-
     private void initUdpClient() throws IOException {
-        ViseUdp.getInstance().addClientListener(new IListener() {
+        ViseUdp.getInstance().startClient(new IListener() {
             @Override
             public void onStart(UdpOperate udpOperate) {
 
@@ -123,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
                 ViseLog.i(e);
             }
         });
-        ViseUdp.getInstance().startClient();
         new Thread(){
             @Override
             public void run() {
@@ -137,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initUdpServer() throws IOException {
-        ViseUdp.getInstance().addServerListener(new IListener() {
+        ViseUdp.getInstance().startServer(new IListener() {
             @Override
             public void onStart(UdpOperate udpOperate) {
 
@@ -154,8 +132,14 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onReceive(UdpOperate udpOperate, PacketBuffer packetBuffer) {
+            public void onReceive(UdpOperate udpOperate, final PacketBuffer packetBuffer) {
                 ViseLog.i(packetBuffer);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mShow_msg.setText(packetBuffer.toString());
+                    }
+                });
             }
 
             @Override
@@ -163,8 +147,6 @@ public class MainActivity extends AppCompatActivity {
                 ViseLog.i(e);
             }
         });
-        ViseUdp.getInstance().bindServer();
-        ViseUdp.getInstance().startServer();
     }
 
     private void bindViews() {
@@ -175,4 +157,9 @@ public class MainActivity extends AppCompatActivity {
         mShow_msg = (TextView) findViewById(R.id.show_msg);
     }
 
+    @Override
+    protected void onDestroy() {
+        ViseUdp.getInstance().stop();
+        super.onDestroy();
+    }
 }

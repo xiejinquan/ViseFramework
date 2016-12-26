@@ -57,9 +57,16 @@ public class Client implements IThread {
 
     public Client() {
         udpConfig = UdpConfig.getInstance();
-        udpConfig.setDataDispose(IData.DEFAULT);
-        udpConfig.setBufferSize(UdpConstant.OBJECT_BUFFER_SIZE);
-        udpConfig.setDiscoveryHandler(ClientDiscoveryHandler.DEFAULT);
+        if (udpConfig.getDataDispose() == null) {
+            udpConfig.setDataDispose(IData.DEFAULT);
+        }
+        if (udpConfig.getBufferSize() == 0) {
+            udpConfig.setBufferSize(UdpConstant.OBJECT_BUFFER_SIZE);
+        }
+        if (udpConfig.getClientDiscoveryHandler() == null) {
+            udpConfig.setDiscoveryHandler(ClientDiscoveryHandler.DEFAULT);
+        }
+        udpOperate = new UdpOperate(udpConfig.getDataDispose(), udpConfig.getBufferSize());
         try {
             selector = Selector.open();
         } catch (IOException ex) {
@@ -87,7 +94,6 @@ public class Client implements IThread {
             InetSocketAddress udpAddress = new InetSocketAddress(host, udpPort);
             synchronized (updateLock) {
                 selector.wakeup();
-                udpOperate = new UdpOperate(udpConfig.getDataDispose(), udpConfig.getBufferSize());
                 udpOperate.connect(selector, udpAddress);
             }
 
@@ -119,17 +125,16 @@ public class Client implements IThread {
     @Override
     public void stop() {
         if (shutdown) return;
-        close();
-        ViseLog.d("Client thread stopping.");
         shutdown = true;
         selector.wakeup();
+        close();
+        ViseLog.d("Client thread stopping.");
     }
 
     @Override
     public void close() {
         if (udpOperate != null) {
             udpOperate.close();
-            udpOperate = null;
         }
         synchronized (updateLock) {
         }
@@ -205,16 +210,16 @@ public class Client implements IThread {
     public void addListener(IListener listener) {
         if (udpOperate != null) {
             udpOperate.addListener(listener);
+            ViseLog.d("Client listener added.");
         }
-        ViseLog.d("Client listener added.");
     }
 
     @Override
     public void removeListener(IListener listener) {
         if (udpOperate != null) {
             udpOperate.removeListener(listener);
+            ViseLog.d("Client listener removed.");
         }
-        ViseLog.d("Client listener removed.");
     }
 
     @Override
