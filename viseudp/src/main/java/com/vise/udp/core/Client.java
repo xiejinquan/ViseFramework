@@ -10,6 +10,7 @@ import com.vise.udp.core.inter.IListener;
 import com.vise.udp.core.inter.IThread;
 import com.vise.udp.handler.ClientDiscoveryHandler;
 import com.vise.udp.mode.PacketBuffer;
+import com.vise.udp.utils.ByteUtil;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -308,9 +309,8 @@ public class Client implements IThread {
     private void broadcast(int udpPort, DatagramSocket socket) throws IOException {
         ByteBuffer dataBuffer = ByteBuffer.allocate(64);
         PacketBuffer packetBuffer = new PacketBuffer();
-        packetBuffer.setByteBuffer(dataBuffer);
         packetBuffer.setCommand(new DiscoverHost());
-        udpConfig.getDataDispose().write(null, packetBuffer);
+        udpConfig.getDataDispose().write(udpOperate, dataBuffer, packetBuffer);
         dataBuffer.flip();
         byte[] data = new byte[dataBuffer.limit()];
         dataBuffer.get(data);

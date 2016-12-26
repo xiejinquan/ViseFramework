@@ -13,16 +13,18 @@ public class TargetInfo {
         return ip;
     }
 
-    public void setIp(String ip) {
+    public TargetInfo setIp(String ip) {
         this.ip = ip;
+        return this;
     }
 
     public int getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public TargetInfo setPort(int port) {
         this.port = port;
+        return this;
     }
 
     @Override

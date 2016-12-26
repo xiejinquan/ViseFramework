@@ -113,8 +113,7 @@ public class UdpOperate {
             try {
                 try {
                     notifySendListener(packetBuffer);
-                    packetBuffer.setByteBuffer(writeBuffer);
-                    dataDispose.write(this, packetBuffer);
+                    dataDispose.write(this, writeBuffer, packetBuffer);
                 } catch (Exception ex) {
                     notifyErrorListener(new UdpException().setException(ex));
                     throw new IOException("Error serializing object of type: " + packetBuffer.getClass().getName(), ex);

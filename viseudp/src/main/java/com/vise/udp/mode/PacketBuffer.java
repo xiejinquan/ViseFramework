@@ -1,6 +1,7 @@
 package com.vise.udp.mode;
 
 import com.vise.udp.command.Command;
+import com.vise.udp.utils.HexUtil;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -13,7 +14,6 @@ import java.util.Arrays;
 public class PacketBuffer {
 
     private TargetInfo targetInfo;
-    private ByteBuffer byteBuffer;
     private byte[] bytes;
     private Command command;
 
@@ -21,40 +21,34 @@ public class PacketBuffer {
         return targetInfo;
     }
 
-    public void setTargetInfo(TargetInfo targetInfo) {
+    public PacketBuffer setTargetInfo(TargetInfo targetInfo) {
         this.targetInfo = targetInfo;
-    }
-
-    public ByteBuffer getByteBuffer() {
-        return byteBuffer;
-    }
-
-    public void setByteBuffer(ByteBuffer byteBuffer) {
-        this.byteBuffer = byteBuffer;
+        return this;
     }
 
     public byte[] getBytes() {
         return bytes;
     }
 
-    public void setBytes(byte[] bytes) {
+    public PacketBuffer setBytes(byte[] bytes) {
         this.bytes = bytes;
+        return this;
     }
 
     public Command getCommand() {
         return command;
     }
 
-    public void setCommand(Command command) {
+    public PacketBuffer setCommand(Command command) {
         this.command = command;
+        return this;
     }
 
     @Override
     public String toString() {
         return "PacketBuffer{" +
                 "targetInfo=" + targetInfo +
-                ", byteBuffer=" + byteBuffer +
-                ", bytes=" + Arrays.toString(bytes) +
+                ", bytes=" + HexUtil.encodeHexStr(bytes) +
                 ", command=" + command +
                 '}';
     }

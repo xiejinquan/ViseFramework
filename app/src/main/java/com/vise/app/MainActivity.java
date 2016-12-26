@@ -21,6 +21,8 @@ import com.vise.udp.core.UdpOperate;
 import com.vise.udp.core.inter.IListener;
 import com.vise.udp.exception.UdpException;
 import com.vise.udp.mode.PacketBuffer;
+import com.vise.udp.mode.TargetInfo;
+import com.vise.udp.utils.HexUtil;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -60,7 +62,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final PacketBuffer packetBuffer = new PacketBuffer();
-                packetBuffer.setCommand(new DiscoverHost());
+                packetBuffer.setTargetInfo(new TargetInfo().setIp("192.168.1.106").setPort(8888));
+                String data = mEdit_udp.getText().toString();
+                packetBuffer.setBytes(HexUtil.decodeHex(data.toCharArray()));
                     new Thread(){
                         @Override
                         public void run() {
