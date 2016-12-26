@@ -20,11 +20,11 @@ public class UdpConfig implements IUdpConfig {
     private ServerDiscoveryHandler serverDiscoveryHandler;
     private ClientDiscoveryHandler clientDiscoveryHandler;
 
-    private UdpConfig(){
+    private UdpConfig() {
 
     }
 
-    public static UdpConfig getInstance(){
+    public static UdpConfig getInstance() {
         if (instance == null) {
             synchronized (UdpConfig.class) {
                 if (instance == null) {

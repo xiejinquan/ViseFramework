@@ -14,7 +14,7 @@ public class AppApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if(BuildConfig.DEBUG){
+        if (BuildConfig.DEBUG) {
             ViseLog.getLogConfig().configAllowLog(true)
                     .configShowBorders(true);
             ViseLog.plant(new DefaultTree());

@@ -2,21 +2,14 @@ package com.vise.app;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.vise.log.ViseLog;
-import com.vise.tcp.TcpClient;
-import com.vise.tcp.TcpConnection;
-import com.vise.tcp.TcpServer;
-import com.vise.tcp.listener.Listener;
 import com.vise.udp.ViseUdp;
-import com.vise.udp.command.DiscoverHost;
 import com.vise.udp.core.UdpOperate;
 import com.vise.udp.core.inter.IListener;
 import com.vise.udp.exception.UdpException;
@@ -25,7 +18,6 @@ import com.vise.udp.mode.TargetInfo;
 import com.vise.udp.utils.HexUtil;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,16 +57,16 @@ public class MainActivity extends AppCompatActivity {
                 packetBuffer.setTargetInfo(new TargetInfo().setIp("192.168.1.106").setPort(8888));
                 String data = mEdit_udp.getText().toString();
                 packetBuffer.setBytes(HexUtil.decodeHex(data.toCharArray()));
-                    new Thread(){
-                        @Override
-                        public void run() {
-                            try {
-                                ViseUdp.getInstance().send(packetBuffer);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            ViseUdp.getInstance().send(packetBuffer);
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    }.start();
+                    }
+                }.start();
             }
         });
     }
@@ -106,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 ViseLog.i(e);
             }
         });
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 try {

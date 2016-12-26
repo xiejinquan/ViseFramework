@@ -21,11 +21,11 @@ public class ViseUdp {
     private Client client;
     private Server server;
 
-    private ViseUdp(){
+    private ViseUdp() {
         init();
     }
 
-    public static ViseUdp getInstance(){
+    public static ViseUdp getInstance() {
         if (instance == null) {
             synchronized (ViseUdp.class) {
                 if (instance == null) {
@@ -36,7 +36,7 @@ public class ViseUdp {
         return instance;
     }
 
-    private void init(){
+    private void init() {
         client = new Client();
         server = new Server();
     }
@@ -66,7 +66,7 @@ public class ViseUdp {
         return instance;
     }
 
-    public ViseUdp stop(){
+    public ViseUdp stop() {
         server.removeListener(serverListener);
         client.removeListener(clientListener);
         server.stop();

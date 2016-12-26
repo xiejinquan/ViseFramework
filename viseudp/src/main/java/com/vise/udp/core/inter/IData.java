@@ -34,6 +34,7 @@ public interface IData {
                 packetBuffer.setBytes(ByteUtil.bufferToBytes(buffer));
                 packetBuffer.setTargetInfo(new TargetInfo().setIp(UdpConfig.getInstance().getIp()).setPort(UdpConfig
                         .getInstance().getPort()));
+                packetBuffer.setCommand(new Command());
             }
             return packetBuffer;
         }

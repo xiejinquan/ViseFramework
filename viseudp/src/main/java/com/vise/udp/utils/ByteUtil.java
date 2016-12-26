@@ -9,13 +9,13 @@ import java.nio.ByteBuffer;
  */
 public class ByteUtil {
 
-    public static byte[] bufferToBytes(ByteBuffer byteBuffer){
+    public static byte[] bufferToBytes(ByteBuffer byteBuffer) {
         byte[] bytes = new byte[byteBuffer.remaining()];
         byteBuffer.get(bytes, 0, bytes.length);
         return bytes;
     }
 
-    public static ByteBuffer bytesToBuffer(byte[] bytes){
+    public static ByteBuffer bytesToBuffer(byte[] bytes) {
         ByteBuffer buff = ByteBuffer.wrap(bytes);
         return buff;
     }

@@ -1,7 +1,6 @@
 package com.vise.udp.core;
 
 import com.vise.log.ViseLog;
-import com.vise.udp.ViseUdp;
 import com.vise.udp.command.KeepAlive;
 import com.vise.udp.common.UdpConstant;
 import com.vise.udp.config.UdpConfig;
@@ -39,10 +38,10 @@ public class Server implements IThread {
         if (udpConfig.getDataDispose() == null) {
             udpConfig.setDataDispose(IData.DEFAULT);
         }
-        if(udpConfig.getBufferSize() == 0){
+        if (udpConfig.getBufferSize() == 0) {
             udpConfig.setBufferSize(UdpConstant.OBJECT_BUFFER_SIZE);
         }
-        if(udpConfig.getServerDiscoveryHandler() == null){
+        if (udpConfig.getServerDiscoveryHandler() == null) {
             udpConfig.setDiscoveryHandler(ServerDiscoveryHandler.DEFAULT);
         }
         try {
@@ -133,7 +132,6 @@ public class Server implements IThread {
             synchronized (keys) {
                 outer:
                 for (Iterator<SelectionKey> iter = keys.iterator(); iter.hasNext(); ) {
-                    keepAlive();
                     SelectionKey selectionKey = iter.next();
                     iter.remove();
                     UdpOperate fromUdpOperate = (UdpOperate) selectionKey.attachment();
@@ -170,15 +168,6 @@ public class Server implements IThread {
                     }
                 }
             }
-        }
-    }
-
-    private void keepAlive() throws IOException {
-        long time = System.currentTimeMillis();
-        if (udpOperate != null && udpOperate.needsKeepAlive(time)) {
-            PacketBuffer packetBuffer = new PacketBuffer();
-            packetBuffer.setCommand(new KeepAlive());
-            udpOperate.send(packetBuffer);
         }
     }
 
