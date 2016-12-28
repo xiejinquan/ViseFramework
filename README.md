@@ -6,6 +6,8 @@
 
 2、BLE通信库：详细使用介绍及配套实例请参考[https://github.com/xiaoyaoyou1212/BLE](https://github.com/xiaoyaoyou1212/BLE).
 
+3、UDP通信库：详细使用介绍及配套实例请参考[https://github.com/xiaoyaoyou1212/ViseUdp](https://github.com/xiaoyaoyou1212/ViseUdp).
+
 
 ### 关于作者
 #### 作者：胡伟
