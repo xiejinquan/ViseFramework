@@ -1,9 +1,9 @@
-package com.vise.base.adapter.helper;
+package com.vise.base.ui.adapter.helper;
 
 import android.content.Context;
 
-import com.vise.base.adapter.BaseAdapter;
-import com.vise.base.adapter.BaseViewHolder;
+import com.vise.base.ui.adapter.BaseAdapter;
+import com.vise.base.ui.adapter.BaseViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;

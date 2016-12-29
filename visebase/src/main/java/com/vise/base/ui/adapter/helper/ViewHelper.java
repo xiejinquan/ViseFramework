@@ -1,11 +1,11 @@
-package com.vise.base.adapter.helper;
+package com.vise.base.ui.adapter.helper;
 
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.widget.Adapter;
 
-import com.vise.base.adapter.BaseViewHolder;
+import com.vise.base.ui.adapter.BaseViewHolder;
 
 public interface ViewHelper<T extends BaseViewHolder> {
     /**

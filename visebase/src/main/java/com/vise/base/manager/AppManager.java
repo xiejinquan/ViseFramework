@@ -3,7 +3,7 @@ package com.vise.base.manager;
 import android.app.Activity;
 import android.content.Context;
 
-import com.vise.base.activity.BaseActivity;
+import com.vise.base.ui.BaseActivity;
 import com.vise.log.ViseLog;
 
 import java.util.Stack;

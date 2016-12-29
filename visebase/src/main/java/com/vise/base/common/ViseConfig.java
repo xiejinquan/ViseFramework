@@ -1,4 +1,4 @@
-package com.vise.base;
+package com.vise.base.common;
 
 import com.vise.base.loader.ILoader;
 

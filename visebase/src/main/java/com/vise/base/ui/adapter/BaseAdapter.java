@@ -1,11 +1,11 @@
-package com.vise.base.adapter;
+package com.vise.base.ui.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.vise.base.adapter.helper.HelperViewHolder;
+import com.vise.base.ui.adapter.helper.HelperViewHolder;
 
 import java.util.List;
 

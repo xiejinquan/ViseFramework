@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
 
-import com.vise.base.ViseConfig;
+import com.vise.base.common.ViseConfig;
 import com.vise.base.kit.Codec;
 import com.vise.base.kit.Kits;
 import com.vise.log.ViseLog;

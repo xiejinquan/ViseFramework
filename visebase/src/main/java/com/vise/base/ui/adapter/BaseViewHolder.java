@@ -1,4 +1,4 @@
-package com.vise.base.adapter;
+package com.vise.base.ui.adapter;
 
 import android.content.Context;
 import android.util.SparseArray;

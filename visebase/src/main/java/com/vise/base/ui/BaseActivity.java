@@ -1,4 +1,4 @@
-package com.vise.base.activity;
+package com.vise.base.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

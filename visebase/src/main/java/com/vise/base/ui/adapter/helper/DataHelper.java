@@ -1,4 +1,4 @@
-package com.vise.base.adapter.helper;
+package com.vise.base.ui.adapter.helper;
 
 import java.util.List;
 

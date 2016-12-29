@@ -2,6 +2,8 @@ package com.vise.base;
 
 import android.app.Application;
 
+import com.vise.base.common.ViseContext;
+
 /**
  * @Description:
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>

@@ -1,7 +1,8 @@
-package com.vise.base;
+package com.vise.base.common;
 
 import android.content.Context;
 
+import com.vise.base.BuildConfig;
 import com.vise.log.ViseLog;
 import com.vise.log.inner.DefaultTree;
 

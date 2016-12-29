@@ -1,4 +1,4 @@
-package com.vise.base.adapter.helper;
+package com.vise.base.ui.adapter.helper;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.vise.base.adapter.BaseViewHolder;
+import com.vise.base.ui.adapter.BaseViewHolder;
 
 public class HelperViewHolder extends BaseViewHolder implements ViewHelper<HelperViewHolder> {
 

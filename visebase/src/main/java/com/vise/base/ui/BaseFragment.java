@@ -1,4 +1,4 @@
-package com.vise.base.fragment;
+package com.vise.base.ui;
 
 import android.app.Activity;
 import android.os.Bundle;

@@ -3,7 +3,7 @@ package com.vise.base.cache;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.vise.base.ViseConfig;
+import com.vise.base.common.ViseConfig;
 
 /**
  * @Description:

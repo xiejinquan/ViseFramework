@@ -3,7 +3,7 @@ package com.vise.base.loader;
 import android.content.Context;
 import android.widget.ImageView;
 
-import com.vise.base.ViseConfig;
+import com.vise.base.common.ViseConfig;
 
 import java.io.File;
 
