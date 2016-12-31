@@ -48,6 +48,11 @@ public class ApiCache {
         abstract T execute() throws Throwable;
     }
 
+    private ApiCache(Context context, String cacheKey, long time) {
+        this.cacheKey = cacheKey;
+        this.diskCache = DiskCache.getInstance(context).setCacheTime(time);
+    }
+
     private ApiCache(Context context, File diskDir, long diskMaxSize, String cacheKey, long time) {
         this.cacheKey = cacheKey;
         diskCache = DiskCache.getInstance(context, diskDir, diskMaxSize).setCacheTime(time);
@@ -114,10 +119,14 @@ public class ApiCache {
 
     public static final class Builder {
         private final Context context;
-        private final File diskDir;
-        private final long diskMaxSize;
+        private File diskDir;
+        private long diskMaxSize;
         private long cacheTime;
         private String cacheKey;
+
+        public Builder(Context context) {
+            this.context = context;
+        }
 
         public Builder(Context context, File diskDir, long diskMaxSize) {
             this.context = context;
@@ -136,7 +145,11 @@ public class ApiCache {
         }
 
         public ApiCache build() {
-            return new ApiCache(context, diskDir, diskMaxSize, cacheKey, cacheTime);
+            if (diskDir == null || diskMaxSize == 0) {
+                return new ApiCache(context, cacheKey, cacheTime);
+            } else {
+                return new ApiCache(context, diskDir, diskMaxSize, cacheKey, cacheTime);
+            }
         }
 
     }
