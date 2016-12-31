@@ -2,8 +2,10 @@ package com.vise.base.cache;
 
 import android.content.Context;
 import android.os.Environment;
+import android.os.StatFs;
 import android.text.TextUtils;
 
+import com.jakewharton.disklrucache.DiskLruCache;
 import com.vise.base.common.ViseConfig;
 import com.vise.base.kit.Codec;
 import com.vise.base.kit.Kits;
@@ -21,45 +23,27 @@ import java.util.regex.Pattern;
  * @date: 2016-12-19 15:10
  */
 public class DiskCache implements ICache {
-    public static final String TAG_CACHE = "=====createTime{createTime_v}expireMills{expireMills_v}";
+    public static final String TAG_CACHE =
+            "=====createTime{createTime_v}expireMills{expireMills_v}";
     public static final String REGEX = "=====createTime\\{(\\d{1,})\\}expireMills\\{(\\d{1,})\\}";
-    public static final long NO_CACHE = -1L;
 
     private DiskLruCache cache;
     private Pattern compile;
+    private long cacheTime;
 
-    private static DiskCache instance;
-
-    private DiskCache(Context context) {
+    private DiskCache(Context context, long diskMaxSize, File diskDir, long time) {
+        this.cacheTime = time;
         compile = Pattern.compile(REGEX);
         try {
-            File cacheDir = getDiskCacheDir(context, getCacheDir());
-            if (!cacheDir.exists()) {
-                cacheDir.mkdirs();
-            }
-            cache = DiskLruCache.open(cacheDir, Kits.Package.getVersionCode(context), 1, 10 * 1024 * 1024);        //10M
+            cache = DiskLruCache.open(diskDir, Kits.Package.getVersionCode(context), 1,
+                    diskMaxSize);
         } catch (IOException e) {
             e.printStackTrace();
             ViseLog.e(e);
         }
     }
 
-    public static DiskCache getInstance(Context context) {
-        if (instance == null) {
-            synchronized (DiskCache.class) {
-                if (instance == null) {
-                    instance = new DiskCache(context.getApplicationContext());
-                }
-            }
-        }
-        return instance;
-    }
-
     public void put(String key, String value) {
-        put(key, value, NO_CACHE);
-    }
-
-    public void put(String key, String value, long expireMills) {
         if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) return;
 
         String name = getMd5Key(key);
@@ -70,7 +54,8 @@ public class DiskCache implements ICache {
 
             DiskLruCache.Editor editor = cache.edit(name);
             StringBuilder content = new StringBuilder(value);
-            content.append(TAG_CACHE.replace("createTime_v", "" + Calendar.getInstance().getTimeInMillis()).replace("expireMills_v", "" + expireMills));
+            content.append(TAG_CACHE.replace("createTime_v", "" + Calendar.getInstance()
+                    .getTimeInMillis()).replace("expireMills_v", "" + cacheTime));
             editor.set(0, content.toString());
             editor.commit();
         } catch (IOException e) {
@@ -81,9 +66,8 @@ public class DiskCache implements ICache {
 
     @Override
     public void put(String key, Object value) {
-        put(key, value != null ? value.toString() : null, NO_CACHE);
+        put(key, value != null ? value.toString() : null);
     }
-
 
     public String get(String key) {
         try {
@@ -103,7 +87,7 @@ public class DiskCache implements ICache {
                     int index = content.indexOf("=====createTime");
 
                     if ((createTime + expireMills > Calendar.getInstance().getTimeInMillis())
-                            || expireMills == NO_CACHE) {
+                            || expireMills == Builder.CACHE_NEVER_EXPIRE) {
                         return content.substring(0, index);
                     } else {
                         cache.remove(md5Key);
@@ -149,18 +133,69 @@ public class DiskCache implements ICache {
         return Codec.MD5.getMessageDigest(key.getBytes());
     }
 
-    private static File getDiskCacheDir(Context context, String dirName) {
-        String cachePath;
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-                || !Environment.isExternalStorageRemovable()) {
-            cachePath = context.getExternalCacheDir().getPath();
-        } else {
-            cachePath = context.getCacheDir().getPath();
-        }
-        return new File(cachePath + File.separator + dirName);
-    }
+    public static final class Builder {
+        private static final int MIN_DISK_CACHE_SIZE = 5 * 1024 * 1024; // 5MB
+        private static final int MAX_DISK_CACHE_SIZE = 20 * 1024 * 1024; // 20MB
+        private static final long CACHE_NEVER_EXPIRE = -1;//永久不过期
+        private final Context context;
+        private long cacheTime = CACHE_NEVER_EXPIRE;
+        private long diskMaxSize;
+        private File diskDir;
 
-    private String getCacheDir() {
-        return ViseConfig.CACHE_DISK_DIR;
+        public Builder(Context context) {
+            this.context = context.getApplicationContext();
+        }
+
+        public Builder diskDir(File directory) {
+            this.diskDir = directory;
+            return this;
+        }
+
+        public Builder diskMax(long maxSize) {
+            this.diskMaxSize = maxSize;
+            return this;
+        }
+
+        public Builder cacheTime(long cacheTime) {
+            this.cacheTime = cacheTime;
+            return this;
+        }
+
+        public DiskCache build() {
+            if (this.diskDir == null) {
+                diskDir = getDiskCacheDir(context, ViseConfig.CACHE_DISK_DIR);
+            }
+            if (!this.diskDir.exists()) {
+                this.diskDir.mkdirs();
+            }
+            if (diskMaxSize <= 0) {
+                diskMaxSize = calculateDiskCacheSize(diskDir);
+            }
+            cacheTime = Math.max(CACHE_NEVER_EXPIRE, this.cacheTime);
+
+            return new DiskCache(context, diskMaxSize, diskDir, cacheTime);
+        }
+
+        private static File getDiskCacheDir(Context context, String dirName) {
+            String cachePath;
+            if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                    || !Environment.isExternalStorageRemovable()) {
+                cachePath = context.getExternalCacheDir().getPath();
+            } else {
+                cachePath = context.getCacheDir().getPath();
+            }
+            return new File(cachePath + File.separator + dirName);
+        }
+
+        private static long calculateDiskCacheSize(File dir) {
+            long size = 0;
+            try {
+                StatFs statFs = new StatFs(dir.getAbsolutePath());
+                long available = ((long) statFs.getBlockCount()) * statFs.getBlockSize();
+                size = available / 50;
+            } catch (IllegalArgumentException ignored) {
+            }
+            return Math.max(Math.min(size, MAX_DISK_CACHE_SIZE), MIN_DISK_CACHE_SIZE);
+        }
     }
 }
