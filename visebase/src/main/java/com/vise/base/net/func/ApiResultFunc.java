@@ -1,9 +1,9 @@
-package com.vise.base.net.convert;
+package com.vise.base.net.func;
 
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.vise.base.net.ApiResult;
+import com.vise.base.net.mode.ApiResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,10 +18,10 @@ import rx.functions.Func1;
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2016-12-30 17:55
  */
-public class ToApiResult<T> implements Func1<ResponseBody, ApiResult<T>> {
+public class ApiResultFunc<T> implements Func1<ResponseBody, ApiResult<T>> {
     protected Class<T> clazz;
 
-    public ToApiResult(Class<T> clazz) {
+    public ApiResultFunc(Class<T> clazz) {
         this.clazz = clazz;
     }
 

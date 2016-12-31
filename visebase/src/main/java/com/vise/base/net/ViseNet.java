@@ -1,5 +1,7 @@
 package com.vise.base.net;
 
+import com.vise.base.net.inter.INet;
+
 /**
  * @Description:
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>

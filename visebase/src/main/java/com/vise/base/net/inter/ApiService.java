@@ -1,4 +1,4 @@
-package com.vise.base.net;
+package com.vise.base.net.inter;
 
 import java.util.List;
 import java.util.Map;

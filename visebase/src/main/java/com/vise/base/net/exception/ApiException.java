@@ -3,17 +3,15 @@ package com.vise.base.net.exception;
 import android.net.ParseException;
 
 import com.google.gson.JsonParseException;
-import com.vise.base.net.ApiCode;
-import com.vise.base.net.ApiResult;
+import com.vise.base.net.mode.ApiCode;
+import com.vise.base.net.mode.ApiResult;
 
-import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONException;
 
 import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 
 import retrofit2.adapter.rxjava.HttpException;
-
-import static com.vise.base.net.ApiCode.*;
 
 /**
  * @Description:
@@ -22,105 +20,99 @@ import static com.vise.base.net.ApiCode.*;
  */
 public class ApiException extends Exception {
 
+    private final int code;
+    private String message;
 
-    private final ApiCode code;
-    private String displayMessage;
-    public String message;
-
-
-    public ApiException(Throwable throwable, ApiCode code) {
+    public ApiException(Throwable throwable, int code) {
         super(throwable);
         this.code = code;
         this.message = throwable.getMessage();
     }
 
-    public ApiCode getCode() {
+    public int getCode() {
         return code;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public ApiException setMessage(String message) {
+        this.message = message;
+        return this;
+    }
+
     public String getDisplayMessage() {
-        return displayMessage;
+        return message + "(code:" + code + ")";
     }
 
-    public void setDisplayMessage(String msg) {
-        this.displayMessage = msg + "(code:" + code + ")";
-    }
-
-    public static boolean isOk(ApiResult apiResult) {
-        if (apiResult == null)
+    public boolean isSuccess(ApiResult apiResult) {
+        if (apiResult == null) {
             return false;
-//        if (apiResult.isOk() || ignoreSomeIssue(apiResult.getCode()))
-//            return true;
-        else
+        }
+        if (apiResult.getCode() == ApiCode.HTTP_SUCCESS
+                || ignoreSomeIssue(apiResult.getCode())) {
+            return true;
+        } else {
             return false;
+        }
     }
 
-    /*private static boolean ignoreSomeIssue(int code) {
+    private boolean ignoreSomeIssue(int code) {
         switch (code) {
-            case TIMESTAMP_ERROR.code://时间戳过期
-            case ACCESS_TOKEN_EXPIRED.code://AccessToken错误或已过期
-            case REFRESH_TOKEN_EXPIRED.code://RefreshToken错误或已过期
-            case OTHER_PHONE_LOGINED.code: //帐号在其它手机已登录
-            case SIGN_ERROR.code://签名错误
+            case ApiCode.TIMESTAMP_ERROR://时间戳过期
+            case ApiCode.ACCESS_TOKEN_EXPIRED://AccessToken错误或已过期
+            case ApiCode.REFRESH_TOKEN_EXPIRED://RefreshToken错误或已过期
+            case ApiCode.OTHER_PHONE_LOGINED: //帐号在其它手机已登录
+            case ApiCode.SIGN_ERROR://签名错误
                 return true;
             default:
                 return false;
-
         }
-    }*/
+    }
 
-
-    /*public static ApiException handleException(Throwable e) {
+    public ApiException handleException(Throwable e) {
         ApiException ex;
         if (e instanceof HttpException) {
             HttpException httpException = (HttpException) e;
-            ex = new ApiException(e, HTTP_ERROR);
+            ex = new ApiException(e, ApiCode.HTTP_ERROR);
             switch (httpException.code()) {
-                case UNAUTHORIZED.getCode():
-                case FORBIDDEN:
-                case NOT_FOUND:
-                case REQUEST_TIMEOUT:
-                case GATEWAY_TIMEOUT:
-                case INTERNAL_SERVER_ERROR:
-                case BAD_GATEWAY:
-                case SERVICE_UNAVAILABLE:
+                case ApiCode.UNAUTHORIZED:
+                case ApiCode.FORBIDDEN:
+                case ApiCode.NOT_FOUND:
+                case ApiCode.REQUEST_TIMEOUT:
+                case ApiCode.GATEWAY_TIMEOUT:
+                case ApiCode.INTERNAL_SERVER_ERROR:
+                case ApiCode.BAD_GATEWAY:
+                case ApiCode.SERVICE_UNAVAILABLE:
                 default:
-                    ex.message = "网络错误";
+                    ex.message = "NETWORK_ERROR";
                     break;
             }
-            return ex;
-        } else if (e instanceof ServerException) {
-            ServerException resultException = (ServerException) e;
-            ex = new ApiException(resultException, resultException.errCode);
-            ex.message = resultException.message;
             return ex;
         } else if (e instanceof JsonParseException
                 || e instanceof JSONException
                 || e instanceof ParseException) {
-            ex = new ApiException(e, PARSE_ERROR);
-            ex.message = "解析错误";
+            ex = new ApiException(e, ApiCode.PARSE_ERROR);
+            ex.message = "PARSE_ERROR";
             return ex;
         } else if (e instanceof ConnectException) {
-            ex = new ApiException(e, NETWORD_ERROR);
-            ex.message = "连接失败";
+            ex = new ApiException(e, ApiCode.NETWORK_ERROR);
+            ex.message = "NETWORK_ERROR";
             return ex;
         } else if (e instanceof javax.net.ssl.SSLHandshakeException) {
-            ex = new ApiException(e, SSL_ERROR);
-            ex.message = "证书验证失败";
+            ex = new ApiException(e, ApiCode.SSL_ERROR);
+            ex.message = "SSL_ERROR";
             return ex;
-        } else if (e instanceof ConnectTimeoutException) {
-            ex = new ApiException(e, TIMEOUT_ERROR);
-            ex.message = "连接超时";
-            return ex;
-        } else if (e instanceof java.net.SocketTimeoutException) {
-            ex = new ApiException(e, TIMEOUT_ERROR);
-            ex.message = "连接超时";
+        } else if (e instanceof SocketTimeoutException) {
+            ex = new ApiException(e, ApiCode.TIMEOUT_ERROR);
+            ex.message = "TIMEOUT_ERROR";
             return ex;
         } else {
-            ex = new ApiException(e, UNKNOWN);
-            ex.message = "未知错误";
+            ex = new ApiException(e, ApiCode.UNKNOWN);
+            ex.message = "UNKNOWN";
             return ex;
         }
-    }*/
+    }
 
 }
