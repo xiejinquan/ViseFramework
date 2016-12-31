@@ -48,9 +48,9 @@ public class ApiCache {
         abstract T execute() throws Throwable;
     }
 
-    private ApiCache(Context context, String cacheKey, long diskMaxSize, File diskDir, long time) {
+    private ApiCache(Context context, File diskDir, long diskMaxSize, String cacheKey, long time) {
         this.cacheKey = cacheKey;
-        diskCache = new DiskCache.Builder(context).diskMax(diskMaxSize).diskDir(diskDir).cacheTime(time).build();
+        diskCache = DiskCache.getInstance(context, diskDir, diskMaxSize).setCacheTime(time);
     }
 
     public <T> Observable.Transformer<T, CacheResult<T>> transformer(CacheMode cacheMode) {
@@ -63,7 +63,6 @@ public class ApiCache {
             }
         };
     }
-
 
 
     public <T> Observable<T> get(final String key) {
@@ -105,8 +104,9 @@ public class ApiCache {
 
     public ICacheStrategy loadStrategy(CacheMode cacheMode) {
         try {
-            String pkName =ICacheStrategy.class.getPackage().getName();
-            return (ICacheStrategy) Class.forName(pkName + "." + cacheMode.getClassName()).newInstance();
+            String pkName = ICacheStrategy.class.getPackage().getName();
+            return (ICacheStrategy) Class.forName(pkName + "." + cacheMode.getClassName())
+                    .newInstance();
         } catch (Exception e) {
             throw new RuntimeException("loadStrategy(" + cacheMode + ") err!!" + e.getMessage());
         }
@@ -114,27 +114,19 @@ public class ApiCache {
 
     public static final class Builder {
         private final Context context;
+        private final File diskDir;
+        private final long diskMaxSize;
         private long cacheTime;
-        private long diskMaxSize;
         private String cacheKey;
-        private File diskDir;
 
-        public Builder(Context context) {
+        public Builder(Context context, File diskDir, long diskMaxSize) {
             this.context = context;
+            this.diskDir = diskDir;
+            this.diskMaxSize = diskMaxSize;
         }
 
         public Builder cacheKey(String cacheKey) {
             this.cacheKey = cacheKey;
-            return this;
-        }
-
-        public Builder diskDir(File directory) {
-            this.diskDir = directory;
-            return this;
-        }
-
-        public Builder diskMax(long maxSize) {
-            this.diskMaxSize = maxSize;
             return this;
         }
 
@@ -144,7 +136,7 @@ public class ApiCache {
         }
 
         public ApiCache build() {
-            return new ApiCache(context, cacheKey, diskMaxSize, diskDir, cacheTime);
+            return new ApiCache(context, diskDir, diskMaxSize, cacheKey, cacheTime);
         }
 
     }

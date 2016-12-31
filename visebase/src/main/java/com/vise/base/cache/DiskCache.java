@@ -26,13 +26,21 @@ public class DiskCache implements ICache {
     public static final String TAG_CACHE =
             "=====createTime{createTime_v}expireMills{expireMills_v}";
     public static final String REGEX = "=====createTime\\{(\\d{1,})\\}expireMills\\{(\\d{1,})\\}";
+    public static final int MIN_DISK_CACHE_SIZE = 5 * 1024 * 1024; // 5MB
+    public static final int MAX_DISK_CACHE_SIZE = 20 * 1024 * 1024; // 20MB
+    public static final long CACHE_NEVER_EXPIRE = -1;//永久不过期
 
+    private static DiskCache instance;
     private DiskLruCache cache;
     private Pattern compile;
-    private long cacheTime;
+    private long cacheTime = CACHE_NEVER_EXPIRE;
 
-    private DiskCache(Context context, long diskMaxSize, File diskDir, long time) {
-        this.cacheTime = time;
+    private DiskCache(Context context) {
+        this(context, getDiskCacheDir(context, ViseConfig.CACHE_DISK_DIR),
+                calculateDiskCacheSize(getDiskCacheDir(context, ViseConfig.CACHE_DISK_DIR)));
+    }
+
+    private DiskCache(Context context, File diskDir, long diskMaxSize) {
         compile = Pattern.compile(REGEX);
         try {
             cache = DiskLruCache.open(diskDir, Kits.Package.getVersionCode(context), 1,
@@ -41,6 +49,28 @@ public class DiskCache implements ICache {
             e.printStackTrace();
             ViseLog.e(e);
         }
+    }
+
+    public static DiskCache getInstance(Context context) {
+        if (instance == null) {
+            synchronized (DiskCache.class) {
+                if (instance == null) {
+                    instance = new DiskCache(context);
+                }
+            }
+        }
+        return instance;
+    }
+
+    public static DiskCache getInstance(Context context, File diskDir, long diskMaxSize) {
+        if (instance == null) {
+            synchronized (DiskCache.class) {
+                if (instance == null) {
+                    instance = new DiskCache(context, diskDir, diskMaxSize);
+                }
+            }
+        }
+        return instance;
     }
 
     public void put(String key, String value) {
@@ -87,7 +117,7 @@ public class DiskCache implements ICache {
                     int index = content.indexOf("=====createTime");
 
                     if ((createTime + expireMills > Calendar.getInstance().getTimeInMillis())
-                            || expireMills == Builder.CACHE_NEVER_EXPIRE) {
+                            || expireMills == CACHE_NEVER_EXPIRE) {
                         return content.substring(0, index);
                     } else {
                         cache.remove(md5Key);
@@ -129,73 +159,38 @@ public class DiskCache implements ICache {
         }
     }
 
+    public DiskCache setCacheTime(long cacheTime) {
+        this.cacheTime = cacheTime;
+        return this;
+    }
+
     public static String getMd5Key(String key) {
         return Codec.MD5.getMessageDigest(key.getBytes());
     }
 
-    public static final class Builder {
-        private static final int MIN_DISK_CACHE_SIZE = 5 * 1024 * 1024; // 5MB
-        private static final int MAX_DISK_CACHE_SIZE = 20 * 1024 * 1024; // 20MB
-        private static final long CACHE_NEVER_EXPIRE = -1;//永久不过期
-        private final Context context;
-        private long cacheTime = CACHE_NEVER_EXPIRE;
-        private long diskMaxSize;
-        private File diskDir;
-
-        public Builder(Context context) {
-            this.context = context.getApplicationContext();
+    private static File getDiskCacheDir(Context context, String dirName) {
+        String cachePath;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable()) {
+            cachePath = context.getExternalCacheDir().getPath();
+        } else {
+            cachePath = context.getCacheDir().getPath();
         }
-
-        public Builder diskDir(File directory) {
-            this.diskDir = directory;
-            return this;
-        }
-
-        public Builder diskMax(long maxSize) {
-            this.diskMaxSize = maxSize;
-            return this;
-        }
-
-        public Builder cacheTime(long cacheTime) {
-            this.cacheTime = cacheTime;
-            return this;
-        }
-
-        public DiskCache build() {
-            if (this.diskDir == null) {
-                diskDir = getDiskCacheDir(context, ViseConfig.CACHE_DISK_DIR);
-            }
-            if (!this.diskDir.exists()) {
-                this.diskDir.mkdirs();
-            }
-            if (diskMaxSize <= 0) {
-                diskMaxSize = calculateDiskCacheSize(diskDir);
-            }
-            cacheTime = Math.max(CACHE_NEVER_EXPIRE, this.cacheTime);
-
-            return new DiskCache(context, diskMaxSize, diskDir, cacheTime);
-        }
-
-        private static File getDiskCacheDir(Context context, String dirName) {
-            String cachePath;
-            if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-                    || !Environment.isExternalStorageRemovable()) {
-                cachePath = context.getExternalCacheDir().getPath();
-            } else {
-                cachePath = context.getCacheDir().getPath();
-            }
-            return new File(cachePath + File.separator + dirName);
-        }
-
-        private static long calculateDiskCacheSize(File dir) {
-            long size = 0;
-            try {
-                StatFs statFs = new StatFs(dir.getAbsolutePath());
-                long available = ((long) statFs.getBlockCount()) * statFs.getBlockSize();
-                size = available / 50;
-            } catch (IllegalArgumentException ignored) {
-            }
-            return Math.max(Math.min(size, MAX_DISK_CACHE_SIZE), MIN_DISK_CACHE_SIZE);
-        }
+        return new File(cachePath + File.separator + dirName);
     }
+
+    private static long calculateDiskCacheSize(File dir) {
+        long size = 0;
+        try {
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            StatFs statFs = new StatFs(dir.getAbsolutePath());
+            long available = ((long) statFs.getBlockCount()) * statFs.getBlockSize();
+            size = available / 50;
+        } catch (IllegalArgumentException ignored) {
+        }
+        return Math.max(Math.min(size, MAX_DISK_CACHE_SIZE), MIN_DISK_CACHE_SIZE);
+    }
+
 }
