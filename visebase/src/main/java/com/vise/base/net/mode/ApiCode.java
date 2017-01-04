@@ -33,7 +33,7 @@ public class ApiCode {
     //调用错误
     public static final int INVOKE_ERROR = 1007;
     //类转换错误
-    public static final int CANNOT_ERROR = 1008;
+    public static final int CONVERT_ERROR = 1008;
     /*========================================*/
 
     /*===========Response响应码================*/

@@ -69,7 +69,4 @@ public interface ApiService {
     @Streaming
     @GET
     Observable<ResponseBody> downloadFile(@Url String fileUrl);
-
-    @GET
-    Observable<ResponseBody> downloadSmallFile(@Url String fileUrl);
 }

@@ -2,14 +2,18 @@ package com.vise.base.net;
 
 import android.content.Context;
 
+import com.vise.base.net.exception.ApiException;
+import com.vise.base.net.func.ApiDataFunc;
+import com.vise.base.net.func.ApiErrFunc;
 import com.vise.base.net.func.ApiResultFunc;
-import com.vise.base.net.func.DataFunc;
 import com.vise.base.net.inter.ApiService;
 import com.vise.base.net.inter.INet;
 import com.vise.base.net.interceptor.GzipRequestInterceptor;
 import com.vise.base.net.interceptor.HeadersInterceptor;
 import com.vise.base.net.interceptor.OfflineCacheInterceptor;
 import com.vise.base.net.interceptor.OnlineCacheInterceptor;
+import com.vise.base.net.mode.ApiCode;
+import com.vise.base.net.mode.ApiResult;
 import com.vise.base.net.mode.CacheMode;
 import com.vise.base.net.mode.CacheResult;
 import com.vise.log.ViseLog;
@@ -28,7 +32,9 @@ import javax.net.ssl.SSLSocketFactory;
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Interceptor;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
@@ -37,10 +43,9 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.FieldMap;
 import rx.Observable;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
 /**
  * @Description:
@@ -48,7 +53,7 @@ import rx.subscriptions.CompositeSubscription;
  * @date: 2016-12-30 16:48
  */
 public class ViseNet implements INet {
-    private static Context mContext;
+    private static Context context;
     private static ApiService apiService;
     private static Map<String, String> headers;
     private static Map<String, String> parameters;
@@ -64,14 +69,11 @@ public class ViseNet implements INet {
     private final List<CallAdapter.Factory> adapterFactories;
     private final Executor callbackExecutor;
     private final boolean validateEagerly;
-    private CompositeSubscription downSubscription = new CompositeSubscription();
-    private Observable.Transformer exceptTransformer = null;
     private CacheMode cacheMode = CacheMode.ONLY_REMOTE;
 
-    private ViseNet(okhttp3.Call.Factory callFactory, Map<String, String> headers, Map<String, 
-            String> parameters, ApiService apiService, List<Converter.Factory> 
-            converterFactories, List<CallAdapter.Factory> adapterFactories, Executor 
-            callbackExecutor, boolean validateEagerly, CacheMode cacheMode) {
+    private ViseNet(okhttp3.Call.Factory callFactory, Map<String, String> headers, Map<String, String> parameters,
+                    ApiService apiService, List<Converter.Factory> converterFactories, List<CallAdapter.Factory>
+                            adapterFactories, Executor callbackExecutor, boolean validateEagerly, CacheMode cacheMode) {
         this.callFactory = callFactory;
         this.headers = headers;
         this.parameters = parameters;
@@ -87,9 +89,101 @@ public class ViseNet implements INet {
         return retrofit.create(service);
     }
 
+    public <T> Observable<T> call(Observable<T> observable) {
+        return observable.compose(new Observable.Transformer<T, T>() {
+            @Override
+            public Observable<T> call(Observable<T> tObservable) {
+                return tObservable
+                        .subscribeOn(Schedulers.io())
+                        .unsubscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .onErrorResumeNext(new ApiErrFunc<T>());
+            }
+        });
+    }
 
-    public void cancelDownload() {
-        downSubscription.clear();
+    public <T> Observable<T> apiCall(Observable<T> observable) {
+        return observable.map(new Func1<T, T>() {
+            @Override
+            public T call(T result) {
+                if(result instanceof ApiResult){
+                    ApiResult value= (ApiResult)result;
+                    return (T) value.getData();
+                }else{
+                    Throwable throwable = new Throwable("Please call(Observable<T> observable) , < T > is not ApiResult object");
+                    new ApiException(throwable, ApiCode.INVOKE_ERROR);
+                    return (T)result;
+                }
+            }
+        }).compose(new Observable.Transformer<T, T>() {
+            @Override
+            public Observable<T> call(Observable<T> tObservable) {
+                return tObservable
+                        .subscribeOn(Schedulers.io())
+                        .unsubscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .onErrorResumeNext(new ApiErrFunc<T>());
+            }
+        });
+    }
+
+    public <T> Observable<T> get(String url, Map<String, String> maps) {
+        return apiService.get(url, maps).compose(this.<T>norTransformer());
+    }
+
+    public <T> Observable<T> post(final String url, final Map<String, String> parameters) {
+        return apiService.post(url, parameters).compose(this.<T>norTransformer());
+    }
+
+    public <T> Observable<T> form(final String url, final @FieldMap(encoded = true) Map<String, Object> fields) {
+        return apiService.postForm(url, fields).compose(this.<T>norTransformer());
+    }
+
+    public <T> Observable<T> body(final String url, final Object body) {
+        return apiService.postBody(url, body).compose(this.<T>norTransformer());
+    }
+
+    public <T> Observable<T> delete(final String url, final Map<String, String> maps) {
+        return apiService.delete(url, maps).compose(this.<T>norTransformer());
+    }
+
+    public <T> Observable<T> put(final String url, final Map<String, String> maps) {
+        return apiService.put(url, maps).compose(this.<T>norTransformer());
+    }
+
+    public <T> Observable<T> uploadImage(String url, RequestBody requestBody) {
+        return apiService.uploadImage(url, requestBody).compose(this.<T>norTransformer());
+    }
+
+    public <T> Observable<T> uploadImage(String url, File file) {
+        return apiService.uploadImage(url, RequestBody.create(okhttp3.MediaType.parse("image/jpg; " +
+                "charset=utf-8"), file)).compose(this.<T>norTransformer());
+    }
+
+    public <T> Observable<T> uploadFile(String url, RequestBody requestBody, MultipartBody.Part file) {
+        return apiService.uploadFile(url, requestBody, file).compose(this.<T>norTransformer());
+    }
+
+    public <T> Observable<T> uploadFlies(String url, Map<String, RequestBody> files) {
+        return apiService.uploadFiles(url, files).compose(this.<T>norTransformer());
+    }
+
+    public <T> Observable<T> apiGet(final String url, final Map<String, String> maps, Class<T> clazz) {
+        return apiService.get(url, maps).map(new ApiResultFunc<T>(clazz)).compose(this.<T>apiTransformer());
+    }
+
+    public <T> Observable<CacheResult<T>> apiCacheGet(final String url, final Map<String, String> maps, Class<T>
+            clazz) {
+        return this.apiGet(url, maps, clazz).compose(apiCache.<T>transformer(cacheMode));
+    }
+
+    public <T> Observable<T> apiPost(final String url, final Map<String, String> parameters, Class<T> clazz) {
+        return apiService.post(url, parameters).map(new ApiResultFunc<T>(clazz)).compose(this.<T>apiTransformer());
+    }
+
+    public <T> Observable<CacheResult<T>> apiCachePost(final String url, final Map<String, String> parameters,
+                                                       Class<T> clazz) {
+        return this.apiPost(url, parameters, clazz).compose(apiCache.<T>transformer(cacheMode));
     }
 
     public Observable<Boolean> clearCache() {
@@ -102,6 +196,46 @@ public class ViseNet implements INet {
 
     public Builder newBuilder(Context context) {
         return new Builder(context);
+    }
+
+    private <T> Observable.Transformer<ResponseBody, T> norTransformer() {
+        return new Observable.Transformer<ResponseBody, T>() {
+            @Override
+            public Observable<T> call(Observable<ResponseBody> apiResultObservable) {
+                return apiResultObservable
+                        .subscribeOn(Schedulers.io())
+                        .unsubscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .map(new Func1<ResponseBody, T>() {
+                            @Override
+                            public T call(ResponseBody responseBody) {
+                                return (T) responseBody;
+                            }
+                        })
+                        .onErrorResumeNext(new ApiErrFunc<T>());
+            }
+        };
+    }
+
+    private <T> Observable.Transformer<ApiResult<T>, T> apiTransformer() {
+        return new Observable.Transformer<ApiResult<T>, T>() {
+            @Override
+            public Observable<T> call(Observable<ApiResult<T>> apiResultObservable) {
+                return apiResultObservable
+                        .subscribeOn(Schedulers.io())
+                        .unsubscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .map(new ApiDataFunc<T>())
+                        .onErrorResumeNext(new ApiErrFunc<T>());
+            }
+        };
+    }
+
+    private static <T> T checkNotNull(T t, String message) {
+        if (t == null) {
+            throw new NullPointerException(message);
+        }
+        return t;
     }
 
     public static final class Builder {
@@ -117,7 +251,7 @@ public class ViseNet implements INet {
         private List<CallAdapter.Factory> adapterFactories = new ArrayList<>();
         private Executor callbackExecutor;
         private boolean validateEagerly;
-        private Context context;
+        private Context mContext;
         private ApiCookie apiCookie;
         private Cache cache;
         private Proxy proxy;
@@ -132,7 +266,7 @@ public class ViseNet implements INet {
         private String baseUrl;
 
         public Builder(Context context) {
-            this.context = context;
+            this.mContext = context;
             okHttpBuilder = new OkHttpClient.Builder();
             retrofitBuilder = new Retrofit.Builder();
             apiCacheBuilder = new ApiCache.Builder(context);
@@ -316,6 +450,7 @@ public class ViseNet implements INet {
         }
 
         public ViseNet build() {
+            context = mContext;
             if (baseUrl == null) {
                 throw new IllegalStateException("Base URL required.");
             }
@@ -332,7 +467,6 @@ public class ViseNet implements INet {
                 throw new IllegalStateException("apiCacheBuilder required.");
             }
 
-            mContext = context;
             retrofitBuilder.baseUrl(baseUrl);
             if (converterFactory == null) {
                 converterFactory = GsonConverterFactory.create();
@@ -373,8 +507,8 @@ public class ViseNet implements INet {
             }
 
             if (connectionPool == null) {
-                connectionPool = new ConnectionPool(DEFAULT_MAX_IDLE_CONNECTIONS,
-                        DEFAULT_KEEP_ALIVE_DURATION, TimeUnit.SECONDS);
+                connectionPool = new ConnectionPool(DEFAULT_MAX_IDLE_CONNECTIONS, DEFAULT_KEEP_ALIVE_DURATION,
+                        TimeUnit.SECONDS);
             }
             okHttpBuilder.connectionPool(connectionPool);
 
@@ -383,7 +517,7 @@ public class ViseNet implements INet {
             }
 
             if (isCookie && apiCookie == null) {
-                okHttpBuilder.cookieJar(new ApiCookie(context));
+                okHttpBuilder.cookieJar(new ApiCookie(mContext));
             }
 
             if (apiCookie != null) {
@@ -399,16 +533,8 @@ public class ViseNet implements INet {
             apiCache = apiCacheBuilder.build();
             apiService = retrofit.create(ApiService.class);
 
-            return new ViseNet(callFactory, headers, parameters, apiService, converterFactories,
-                    adapterFactories,
+            return new ViseNet(callFactory, headers, parameters, apiService, converterFactories, adapterFactories,
                     callbackExecutor, validateEagerly, cacheMode);
-        }
-
-        private <T> T checkNotNull(T t, String message) {
-            if (t == null) {
-                throw new NullPointerException(message);
-            }
-            return t;
         }
     }
 }

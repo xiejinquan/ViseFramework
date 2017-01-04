@@ -46,7 +46,7 @@ public class ApiException extends Exception {
         return message + "(code:" + code + ")";
     }
 
-    public boolean isSuccess(ApiResult apiResult) {
+    public static boolean isSuccess(ApiResult apiResult) {
         if (apiResult == null) {
             return false;
         }
@@ -58,7 +58,7 @@ public class ApiException extends Exception {
         }
     }
 
-    private boolean ignoreSomeIssue(int code) {
+    private static boolean ignoreSomeIssue(int code) {
         switch (code) {
             case ApiCode.TIMESTAMP_ERROR://时间戳过期
             case ApiCode.ACCESS_TOKEN_EXPIRED://AccessToken错误或已过期
@@ -71,7 +71,7 @@ public class ApiException extends Exception {
         }
     }
 
-    public ApiException handleException(Throwable e) {
+    public static ApiException handleException(Throwable e) {
         ApiException ex;
         if (e instanceof HttpException) {
             HttpException httpException = (HttpException) e;
