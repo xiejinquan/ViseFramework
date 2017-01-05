@@ -50,8 +50,7 @@ public class ApiException extends Exception {
         if (apiResult == null) {
             return false;
         }
-        if (apiResult.getCode() == ApiCode.HTTP_SUCCESS
-                || ignoreSomeIssue(apiResult.getCode())) {
+        if (apiResult.getCode() == ApiCode.HTTP_SUCCESS || ignoreSomeIssue(apiResult.getCode())) {
             return true;
         } else {
             return false;
@@ -90,9 +89,7 @@ public class ApiException extends Exception {
                     break;
             }
             return ex;
-        } else if (e instanceof JsonParseException
-                || e instanceof JSONException
-                || e instanceof ParseException) {
+        } else if (e instanceof JsonParseException || e instanceof JSONException || e instanceof ParseException) {
             ex = new ApiException(e, ApiCode.PARSE_ERROR);
             ex.message = "PARSE_ERROR";
             return ex;

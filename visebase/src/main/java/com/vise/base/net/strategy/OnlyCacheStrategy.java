@@ -1,6 +1,6 @@
 package com.vise.base.net.strategy;
 
-import com.vise.base.net.ApiCache;
+import com.vise.base.net.core.ApiCache;
 import com.vise.base.net.mode.CacheResult;
 
 import rx.Observable;

@@ -77,8 +77,7 @@ public class CookiesStore {
 
     public List<Cookie> get(HttpUrl url) {
         ArrayList<Cookie> ret = new ArrayList<>();
-        if (cookies.containsKey(url.host()))
-            ret.addAll(cookies.get(url.host()).values());
+        if (cookies.containsKey(url.host())) ret.addAll(cookies.get(url.host()).values());
         return ret;
     }
 
@@ -118,14 +117,13 @@ public class CookiesStore {
     }
 
     protected String encodeCookie(OkHttpCookies cookie) {
-        if (cookie == null)
-            return null;
+        if (cookie == null) return null;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(os);
             outputStream.writeObject(cookie);
         } catch (IOException e) {
-            ViseLog.d("IOException in encodeCookie"+e.getMessage());
+            ViseLog.d("IOException in encodeCookie" + e.getMessage());
             return null;
         }
 
@@ -140,9 +138,9 @@ public class CookiesStore {
             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
             cookie = ((OkHttpCookies) objectInputStream.readObject()).getCookies();
         } catch (IOException e) {
-            ViseLog.e("IOException in decodeCookie"+e.getMessage());
+            ViseLog.e("IOException in decodeCookie" + e.getMessage());
         } catch (ClassNotFoundException e) {
-            ViseLog.e("ClassNotFoundException in decodeCookie"+e.getMessage());
+            ViseLog.e("ClassNotFoundException in decodeCookie" + e.getMessage());
         }
 
         return cookie;

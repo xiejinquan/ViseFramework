@@ -36,16 +36,16 @@ public class ApiResultFunc<T> implements Func1<ResponseBody, ApiResult<T>> {
                 apiResult.setData((T) json);
                 apiResult.setCode(0);
             } else {
-                ApiResult result = parseApiResult(json,apiResult);
-                if (result != null){
+                ApiResult result = parseApiResult(json, apiResult);
+                if (result != null) {
                     apiResult = result;
                     if (apiResult.getData() != null) {
                         T data = gson.fromJson(apiResult.getData().toString(), clazz);
                         apiResult.setData(data);
-                    }else{
+                    } else {
                         apiResult.setMsg("ApiResult's data is null");
                     }
-                }else{
+                } else {
                     apiResult.setMsg("json is null");
                 }
             }
@@ -61,9 +61,8 @@ public class ApiResultFunc<T> implements Func1<ResponseBody, ApiResult<T>> {
         return apiResult;
     }
 
-    private ApiResult parseApiResult(String json,ApiResult apiResult) throws JSONException {
-        if (TextUtils.isEmpty(json))
-            return null;
+    private ApiResult parseApiResult(String json, ApiResult apiResult) throws JSONException {
+        if (TextUtils.isEmpty(json)) return null;
         JSONObject jsonObject = new JSONObject(json);
         if (jsonObject.has("code")) {
             apiResult.setCode(jsonObject.getInt("code"));

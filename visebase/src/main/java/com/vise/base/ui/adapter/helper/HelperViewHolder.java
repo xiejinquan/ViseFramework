@@ -96,7 +96,7 @@ public class HelperViewHolder extends BaseViewHolder implements ViewHelper<Helpe
     @Override
     public HelperViewHolder setImageDrawableRes(int viewId, int drawableRes) {
         Drawable drawable = mContext.getResources().getDrawable(drawableRes);
-        return setImageDrawable(viewId,drawable);
+        return setImageDrawable(viewId, drawable);
     }
 
     @Override

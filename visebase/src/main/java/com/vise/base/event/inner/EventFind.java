@@ -18,7 +18,8 @@ public class EventFind {
         return findAnnotatedMethods(listenerClass, producerMethods, compositeSubscription);
     }
 
-    private static EventComposite findAnnotatedMethods(Object listenerClass, Set<EventSubscriber> subscriberMethods, CompositeSubscription compositeSubscription) {
+    private static EventComposite findAnnotatedMethods(Object listenerClass, Set<EventSubscriber> subscriberMethods,
+                                                       CompositeSubscription compositeSubscription) {
         for (Method method : listenerClass.getClass().getDeclaredMethods()) {
             if (method.isBridge()) {
                 continue;
@@ -26,14 +27,14 @@ public class EventFind {
             if (method.isAnnotationPresent(EventSubscribe.class)) {
                 Class<?>[] parameterTypes = method.getParameterTypes();
                 if (parameterTypes.length != 1) {
-                    throw new IllegalArgumentException("Method " + method + " has @Subscribe annotation but requires "
-                            + parameterTypes.length + " arguments.  Methods must require a single argument.");
+                    throw new IllegalArgumentException("Method " + method + " has @Subscribe annotation but requires " + parameterTypes
+                            .length + " arguments.  Methods must require a single argument.");
                 }
 
                 Class<?> parameterClazz = parameterTypes[0];
                 if ((method.getModifiers() & Modifier.PUBLIC) == 0) {
-                    throw new IllegalArgumentException("Method " + method + " has @EventSubscribe annotation on " + parameterClazz
-                            + " but is not 'public'.");
+                    throw new IllegalArgumentException("Method " + method + " has @EventSubscribe annotation on " + parameterClazz + " " +
+                            "but is not 'public'.");
                 }
 
                 EventSubscribe annotation = method.getAnnotation(EventSubscribe.class);

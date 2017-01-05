@@ -1,4 +1,4 @@
-package com.vise.base.net.inter;
+package com.vise.base.net.api;
 
 import java.util.List;
 import java.util.Map;
@@ -56,7 +56,8 @@ public interface ApiService {
 
     @Multipart
     @POST()
-    Observable<ResponseBody> uploadFile(@Url String fileUrl, @Part("description") RequestBody description, @Part("files") MultipartBody.Part file);
+    Observable<ResponseBody> uploadFile(@Url String fileUrl, @Part("description") RequestBody description, @Part("files") MultipartBody
+            .Part file);
 
     @Multipart
     @POST()

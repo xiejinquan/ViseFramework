@@ -35,15 +35,10 @@ public class OfflineCacheInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
         if (!Network.isConnected(context)) {
-            ViseLog.i(" no network load cache:"+ request.cacheControl().toString());
-            request = request.newBuilder()
-                    .cacheControl(CacheControl.FORCE_CACHE)
-                    .cacheControl(CacheControl.FORCE_NETWORK)
-                    .build();
+            ViseLog.i(" no network load cache:" + request.cacheControl().toString());
+            request = request.newBuilder().cacheControl(CacheControl.FORCE_CACHE).cacheControl(CacheControl.FORCE_NETWORK).build();
             Response response = chain.proceed(request);
-            return response.newBuilder()
-                    .removeHeader("Pragma")
-                    .header("Cache-Control", "public, only-if-cached, " + cacheControlValue)
+            return response.newBuilder().removeHeader("Pragma").header("Cache-Control", "public, only-if-cached, " + cacheControlValue)
                     .build();
         }
         return chain.proceed(request);

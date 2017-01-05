@@ -40,21 +40,18 @@ public class EventSubscriber extends EventHelper {
     }
 
     private final void initObservable(Class aClass) {
-        subscription = toObservable(aClass)
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.io())
-                .observeOn(EventThread.getScheduler(thread))
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object event) {
-                        try {
-                            handleEvent(event);
-                            dellSticky(event);
-                        } catch (InvocationTargetException e) {
-                            throwRuntimeException("Could not dispatch event: " + event.getClass() + " to subscriber " + EventSubscriber.this, e);
-                        }
-                    }
-                });
+        subscription = toObservable(aClass).onBackpressureBuffer().subscribeOn(Schedulers.io()).observeOn(EventThread.getScheduler
+                (thread)).subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object event) {
+                try {
+                    handleEvent(event);
+                    dellSticky(event);
+                } catch (InvocationTargetException e) {
+                    throwRuntimeException("Could not dispatch event: " + event.getClass() + " to subscriber " + EventSubscriber.this, e);
+                }
+            }
+        });
     }
 
     public final Subscription getSubscription() {

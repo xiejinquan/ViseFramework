@@ -15,14 +15,14 @@ public class ViseContext {
     private static ViseContext instance;
     private Context context;
 
-    private ViseContext(Context context){
+    private ViseContext(Context context) {
         this.context = context;
     }
 
-    public static ViseContext getInstance(Context context){
-        if(instance == null){
-            synchronized (ViseContext.class){
-                if(instance == null){
+    public static ViseContext getInstance(Context context) {
+        if (instance == null) {
+            synchronized (ViseContext.class) {
+                if (instance == null) {
                     instance = new ViseContext(context);
                 }
             }
@@ -30,14 +30,13 @@ public class ViseContext {
         return instance;
     }
 
-    public void init(){
+    public void init() {
         initLog();
     }
 
     private void initLog() {
-        if(BuildConfig.DEBUG){
-            ViseLog.getLogConfig().configAllowLog(true)
-                    .configShowBorders(true);
+        if (BuildConfig.DEBUG) {
+            ViseLog.getLogConfig().configAllowLog(true).configShowBorders(true);
             ViseLog.plant(new DefaultTree());
         }
     }

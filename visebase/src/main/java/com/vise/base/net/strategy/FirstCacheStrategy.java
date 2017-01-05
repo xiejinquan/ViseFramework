@@ -1,6 +1,6 @@
 package com.vise.base.net.strategy;
 
-import com.vise.base.net.ApiCache;
+import com.vise.base.net.core.ApiCache;
 import com.vise.base.net.mode.CacheResult;
 
 import rx.Observable;
@@ -22,12 +22,11 @@ public class FirstCacheStrategy<T> extends CacheStrategy<T> {
             }
         });
         Observable<CacheResult<T>> remote = loadRemote(apiCache, cacheKey, source);
-        return Observable.concat(cache, remote)
-                .firstOrDefault(null, new Func1<CacheResult<T>, Boolean>() {
-                    @Override
-                    public Boolean call(CacheResult<T> tResultData) {
-                        return tResultData != null && tResultData.getCacheData() != null;
-                    }
-                });
+        return Observable.concat(cache, remote).firstOrDefault(null, new Func1<CacheResult<T>, Boolean>() {
+            @Override
+            public Boolean call(CacheResult<T> tResultData) {
+                return tResultData != null && tResultData.getCacheData() != null;
+            }
+        });
     }
 }

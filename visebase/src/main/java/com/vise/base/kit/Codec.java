@@ -348,8 +348,7 @@ public class Codec {
          * @return
          * @throws Exception
          */
-        public static boolean verify(byte[] data, String publicKey, String sign)
-                throws Exception {
+        public static boolean verify(byte[] data, String publicKey, String sign) throws Exception {
 
             byte[] keyBytes = BASE64.decode(publicKey); // 解密由base64编码的公钥
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);  // 构造X509EncodedKeySpec对象
@@ -371,8 +370,7 @@ public class Codec {
          * @return
          * @throws Exception
          */
-        public static byte[] decryptByPrivateKey(byte[] data, String key)
-                throws Exception {
+        public static byte[] decryptByPrivateKey(byte[] data, String key) throws Exception {
             byte[] keyBytes = BASE64.decode(key);   // 对密钥解密
 
             PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(keyBytes);   // 取得私钥
@@ -394,8 +392,7 @@ public class Codec {
          * @return
          * @throws Exception
          */
-        public static byte[] decryptByPublicKey(byte[] data, String key)
-                throws Exception {
+        public static byte[] decryptByPublicKey(byte[] data, String key) throws Exception {
             byte[] keyBytes = BASE64.decode(key);       // 对密钥解密
 
             // 取得公钥
@@ -418,8 +415,7 @@ public class Codec {
          * @return
          * @throws Exception
          */
-        public static byte[] encryptByPublicKey(byte[] data, String key)
-                throws Exception {
+        public static byte[] encryptByPublicKey(byte[] data, String key) throws Exception {
             byte[] keyBytes = BASE64.decode(key);   // 对公钥解密
 
             // 取得公钥
@@ -442,8 +438,7 @@ public class Codec {
          * @return
          * @throws Exception
          */
-        public static byte[] encryptByPrivateKey(byte[] data, String key)
-                throws Exception {
+        public static byte[] encryptByPrivateKey(byte[] data, String key) throws Exception {
 
             byte[] keyBytes = BASE64.decode(key);   // 对密钥解密
 
@@ -466,8 +461,7 @@ public class Codec {
          * @return
          * @throws Exception
          */
-        public static String getPrivateKey(Map<String, Object> keyMap)
-                throws Exception {
+        public static String getPrivateKey(Map<String, Object> keyMap) throws Exception {
             Key key = (Key) keyMap.get(PRIVATE_KEY);
 
             return BASE64.encodeToString(key.getEncoded());
@@ -480,8 +474,7 @@ public class Codec {
          * @return
          * @throws Exception
          */
-        public static String getPublicKey(Map<String, Object> keyMap)
-                throws Exception {
+        public static String getPublicKey(Map<String, Object> keyMap) throws Exception {
             Key key = (Key) keyMap.get(PUBLIC_KEY);
 
             return BASE64.encodeToString(key.getEncoded());
@@ -494,8 +487,7 @@ public class Codec {
          * @throws Exception
          */
         public static Map<String, Object> initKey() throws Exception {
-            KeyPairGenerator keyPairGen = KeyPairGenerator
-                    .getInstance(Algorithm.RSA.getType());
+            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(Algorithm.RSA.getType());
             keyPairGen.initialize(1024);
 
             KeyPair keyPair = keyPairGen.generateKeyPair();
@@ -511,10 +503,8 @@ public class Codec {
     }
 
     public static boolean checkNull(String text) {
-        if (text == null || text.length() == 0)
-            return true;
-        else
-            return false;
+        if (text == null || text.length() == 0) return true;
+        else return false;
     }
 
     public enum Algorithm {

@@ -61,13 +61,13 @@ public abstract class HelperAdapter<T> extends BaseAdapter<T> implements DataHel
 
     @Override
     public void addAll(int startPosition, List<T> dataList) {
-        if(mList != null) mList.addAll(startPosition, dataList);
+        if (mList != null) mList.addAll(startPosition, dataList);
         notifyDataSetChanged();
     }
 
     @Override
     public void add(int startPosition, T data) {
-        if(mList != null) mList.add(startPosition, data);
+        if (mList != null) mList.add(startPosition, data);
         notifyDataSetChanged();
     }
 
@@ -83,31 +83,31 @@ public abstract class HelperAdapter<T> extends BaseAdapter<T> implements DataHel
 
     @Override
     public void alterObj(int index, T data) {
-        if(mList != null) mList.set(index, data);
+        if (mList != null) mList.set(index, data);
         notifyDataSetChanged();
     }
 
     @Override
     public void remove(T data) {
-        if(mList != null) mList.remove(data);
+        if (mList != null) mList.remove(data);
         notifyDataSetChanged();
     }
 
     @Override
     public void removeToIndex(int index) {
-        if(mList != null) mList.remove(index);
+        if (mList != null) mList.remove(index);
         notifyDataSetChanged();
     }
 
     @Override
     public void replaceAll(List<T> dataList) {
-        if(mList != null) mList.clear();
+        if (mList != null) mList.clear();
         addAll(0, dataList);
     }
 
     @Override
     public void clear() {
-        if(mList != null) mList.clear();
+        if (mList != null) mList.clear();
         notifyDataSetChanged();
     }
 
@@ -118,7 +118,7 @@ public abstract class HelperAdapter<T> extends BaseAdapter<T> implements DataHel
 
     @Override
     public void setListAll(List<T> dataList) {
-        if(mList == null){
+        if (mList == null) {
             mList = new ArrayList<>();
         }
         mList.clear();

@@ -98,8 +98,7 @@ public class Kits {
                 return false;
             }
 
-            Intent i = new Intent(Intent.ACTION_DELETE, Uri.parse(new StringBuilder().append("package:")
-                    .append(packageName).toString()));
+            Intent i = new Intent(Intent.ACTION_DELETE, Uri.parse(new StringBuilder().append("package:").append(packageName).toString()));
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(i);
             return true;
@@ -170,7 +169,8 @@ public class Kits {
             try {
                 PackageManager packageManager = context.getPackageManager();
                 if (packageManager != null) {
-                    ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+                    ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager
+                            .GET_META_DATA);
                     if (applicationInfo != null) {
                         if (applicationInfo.metaData != null) {
                             resultData = applicationInfo.metaData.getString(key);
@@ -1014,8 +1014,7 @@ public class Kits {
         public static final String NETWORK_TYPE_DISCONNECT = "disconnect";
 
         public static int getNetworkType(Context context) {
-            ConnectivityManager connectivityManager = (ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connectivityManager == null ? null : connectivityManager.getActiveNetworkInfo();
             return networkInfo == null ? -1 : networkInfo.getType();
         }
@@ -1034,8 +1033,8 @@ public class Kits {
                     type = NETWORK_TYPE_WIFI;
                 } else if ("MOBILE".equalsIgnoreCase(typeName)) {
                     String proxyHost = android.net.Proxy.getDefaultHost();
-                    type = TextUtils.isEmpty(proxyHost) ? (isFastMobileNetwork(context) ? NETWORK_TYPE_3G : NETWORK_TYPE_2G)
-                            : NETWORK_TYPE_WAP;
+                    type = TextUtils.isEmpty(proxyHost) ? (isFastMobileNetwork(context) ? NETWORK_TYPE_3G : NETWORK_TYPE_2G) :
+                            NETWORK_TYPE_WAP;
                 } else {
                     type = NETWORK_TYPE_UNKNOWN;
                 }

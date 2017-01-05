@@ -1,4 +1,4 @@
-package com.vise.base.net;
+package com.vise.base.net.core;
 
 import android.content.Context;
 
@@ -110,8 +110,7 @@ public class ApiCache {
     public ICacheStrategy loadStrategy(CacheMode cacheMode) {
         try {
             String pkName = ICacheStrategy.class.getPackage().getName();
-            return (ICacheStrategy) Class.forName(pkName + "." + cacheMode.getClassName())
-                    .newInstance();
+            return (ICacheStrategy) Class.forName(pkName + "." + cacheMode.getClassName()).newInstance();
         } catch (Exception e) {
             throw new RuntimeException("loadStrategy(" + cacheMode + ") err!!" + e.getMessage());
         }
@@ -121,7 +120,7 @@ public class ApiCache {
         private final Context context;
         private File diskDir;
         private long diskMaxSize;
-        private long cacheTime;
+        private long cacheTime = DiskCache.CACHE_NEVER_EXPIRE;
         private String cacheKey;
 
         public Builder(Context context) {

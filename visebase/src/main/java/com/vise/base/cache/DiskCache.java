@@ -23,9 +23,8 @@ import java.util.regex.Pattern;
  * @date: 2016-12-19 15:10
  */
 public class DiskCache implements ICache {
-    public static final String TAG_CACHE =
-            "=====createTime{createTime_v}expireMills{expireMills_v}";
-    public static final String REGEX = "=====createTime\\{(\\d{1,})\\}expireMills\\{(\\d{1,})\\}";
+    public static final String TAG_CACHE = "@createTime{createTime_v}expireMills{expireMills_v}@";
+    public static final String REGEX = "@createTime\\{(\\d{1,})\\}expireMills\\{((-)?\\d{1,})\\}@";
     public static final int MIN_DISK_CACHE_SIZE = 5 * 1024 * 1024; // 5MB
     public static final int MAX_DISK_CACHE_SIZE = 20 * 1024 * 1024; // 20MB
     public static final long CACHE_NEVER_EXPIRE = -1;//永久不过期
@@ -36,15 +35,14 @@ public class DiskCache implements ICache {
     private long cacheTime = CACHE_NEVER_EXPIRE;
 
     private DiskCache(Context context) {
-        this(context, getDiskCacheDir(context, ViseConfig.CACHE_DISK_DIR),
-                calculateDiskCacheSize(getDiskCacheDir(context, ViseConfig.CACHE_DISK_DIR)));
+        this(context, getDiskCacheDir(context, ViseConfig.CACHE_DISK_DIR), calculateDiskCacheSize(getDiskCacheDir(context, ViseConfig
+                .CACHE_DISK_DIR)));
     }
 
     private DiskCache(Context context, File diskDir, long diskMaxSize) {
         compile = Pattern.compile(REGEX);
         try {
-            cache = DiskLruCache.open(diskDir, Kits.Package.getVersionCode(context), 1,
-                    diskMaxSize);
+            cache = DiskLruCache.open(diskDir, Kits.Package.getVersionCode(context), 1, diskMaxSize);
         } catch (IOException e) {
             e.printStackTrace();
             ViseLog.e(e);
@@ -84,8 +82,8 @@ public class DiskCache implements ICache {
 
             DiskLruCache.Editor editor = cache.edit(name);
             StringBuilder content = new StringBuilder(value);
-            content.append(TAG_CACHE.replace("createTime_v", "" + Calendar.getInstance()
-                    .getTimeInMillis()).replace("expireMills_v", "" + cacheTime));
+            content.append(TAG_CACHE.replace("createTime_v", "" + Calendar.getInstance().getTimeInMillis()).replace("expireMills_v", "" +
+                    cacheTime));
             editor.set(0, content.toString());
             editor.commit();
         } catch (IOException e) {
@@ -114,10 +112,9 @@ public class DiskCache implements ICache {
                         createTime = Long.parseLong(matcher.group(1));
                         expireMills = Long.parseLong(matcher.group(2));
                     }
-                    int index = content.indexOf("=====createTime");
+                    int index = content.indexOf("@createTime");
 
-                    if ((createTime + expireMills > Calendar.getInstance().getTimeInMillis())
-                            || expireMills == CACHE_NEVER_EXPIRE) {
+                    if ((createTime + expireMills > Calendar.getInstance().getTimeInMillis()) || expireMills == CACHE_NEVER_EXPIRE) {
                         return content.substring(0, index);
                     } else {
                         cache.remove(md5Key);
@@ -160,6 +157,7 @@ public class DiskCache implements ICache {
     }
 
     public DiskCache setCacheTime(long cacheTime) {
+        ViseLog.i(cacheTime);
         this.cacheTime = cacheTime;
         return this;
     }
@@ -170,8 +168,7 @@ public class DiskCache implements ICache {
 
     private static File getDiskCacheDir(Context context, String dirName) {
         String cachePath;
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-                || !Environment.isExternalStorageRemovable()) {
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) || !Environment.isExternalStorageRemovable()) {
             cachePath = context.getExternalCacheDir().getPath();
         } else {
             cachePath = context.getCacheDir().getPath();

@@ -30,6 +30,7 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter {
 
     /**
      * 在初始化的时候不能确定layoutId,才可以不提供,但是必须重checkLayoutId方法
+     *
      * @param context
      * @param data
      */

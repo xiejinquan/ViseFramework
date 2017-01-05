@@ -1,6 +1,5 @@
 package com.vise.base.net.interceptor;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.vise.log.ViseLog;
@@ -8,7 +7,6 @@ import com.vise.log.ViseLog;
 import java.io.IOException;
 
 import okhttp3.Interceptor;
-import okhttp3.Request;
 import okhttp3.Response;
 
 /**
@@ -33,13 +31,9 @@ public class OnlineCacheInterceptor implements Interceptor {
         okhttp3.Response originalResponse = chain.proceed(chain.request());
         String cacheControl = originalResponse.header("Cache-Control");
         ViseLog.i(cacheControlValue + "s load cache:" + cacheControl);
-        if (TextUtils.isEmpty(cacheControl) || cacheControl.contains("no-store") || cacheControl
-                .contains("no-cache") || cacheControl.contains("must-revalidate") || cacheControl
-                .contains("max-age") || cacheControl.contains("max-stale")) {
-            return originalResponse.newBuilder()
-                    .removeHeader("Pragma")
-                    .header("Cache-Control", "public, " + cacheControlValue)
-                    .build();
+        if (TextUtils.isEmpty(cacheControl) || cacheControl.contains("no-store") || cacheControl.contains("no-cache") || cacheControl
+                .contains("must-revalidate") || cacheControl.contains("max-age") || cacheControl.contains("max-stale")) {
+            return originalResponse.newBuilder().removeHeader("Pragma").header("Cache-Control", "public, " + cacheControlValue).build();
 
         } else {
             return originalResponse;

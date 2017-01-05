@@ -23,10 +23,8 @@ public class GzipRequestInterceptor implements Interceptor {
         if (originalRequest.body() == null || originalRequest.header("Content-Encoding") != null) {
             return chain.proceed(originalRequest);
         }
-        Request compressedRequest = originalRequest.newBuilder()
-                .header("Accept-Encoding", "gzip")
-                .method(originalRequest.method(), gzip(originalRequest.body()))
-                .build();
+        Request compressedRequest = originalRequest.newBuilder().header("Accept-Encoding", "gzip").method(originalRequest.method(), gzip
+                (originalRequest.body())).build();
         return chain.proceed(compressedRequest);
     }
 

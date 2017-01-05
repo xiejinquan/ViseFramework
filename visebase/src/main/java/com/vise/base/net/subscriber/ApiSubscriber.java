@@ -27,10 +27,10 @@ public abstract class ApiSubscriber<T> extends Subscriber<T> {
     @Override
     public void onError(Throwable e) {
         if (e instanceof ApiException) {
-            ViseLog.e("e instanceof ApiException" + e.getMessage());
+            ViseLog.e("e instanceof ApiException " + e.getMessage());
             onError((ApiException) e);
         } else {
-            ViseLog.e("e !instanceof ApiException" + e.getMessage());
+            ViseLog.e("e !instanceof ApiException " + e.getMessage());
             onError(new ApiException(e, ApiCode.CONVERT_ERROR));
         }
     }
@@ -38,7 +38,7 @@ public abstract class ApiSubscriber<T> extends Subscriber<T> {
     @Override
     public void onStart() {
         super.onStart();
-        if (!Network.isConnected(contextWeakReference.get())) {
+        if (Network.isConnected(contextWeakReference.get())) {
             onCompleted();
         } else {
             onError(new ApiException(new NetworkErrorException(), ApiCode.NETWORK_ERROR));

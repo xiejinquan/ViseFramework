@@ -1,4 +1,4 @@
-package com.vise.base.net;
+package com.vise.base.net.core;
 
 import android.content.Context;
 
