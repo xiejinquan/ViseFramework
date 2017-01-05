@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
-        api = new ViseApi.Builder(mContext).baseUrl("https://api.github.com/").cacheMode(CacheMode.FIRST_CACHE).cacheKey("https://api.github.com/").build();
+        api = new ViseApi.Builder(mContext).baseUrl("https://api.github.com/").cacheMode(CacheMode.CACHE_AND_REMOTE).cacheKey("https://api.github.com/").build();
         init();
     }
 
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.request_post:
                 mShow_msg.setText("");
-                api.get("", new HashMap<String, String>(), new ApiCallback<GithubModel>() {
+                api.cacheGet("", new HashMap<String, String>(), new ApiCallback<CacheResult<GithubModel>>() {
                     @Override
                     public void onStart() {
                         ViseLog.d("onStart");
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
 
                     @Override
-                    public void onNext(GithubModel githubModel) {
+                    public void onNext(CacheResult<GithubModel> githubModel) {
                         ViseLog.i(githubModel.toString());
                         mShow_msg.setText(githubModel.toString());
                     }

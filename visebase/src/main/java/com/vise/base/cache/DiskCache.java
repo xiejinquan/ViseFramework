@@ -157,7 +157,6 @@ public class DiskCache implements ICache {
     }
 
     public DiskCache setCacheTime(long cacheTime) {
-        ViseLog.i(cacheTime);
         this.cacheTime = cacheTime;
         return this;
     }
