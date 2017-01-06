@@ -2,7 +2,6 @@ package com.vise.base.net.interceptor;
 
 import android.content.Context;
 
-import com.vise.log.ViseLog;
 import com.vise.utils.assist.Network;
 
 import java.io.IOException;
@@ -18,7 +17,7 @@ import okhttp3.Response;
  * @date: 16/12/31 22:36.
  */
 public class OfflineCacheInterceptor implements Interceptor {
-    private static final int MAX_AGE_OFFLINE = 3 * 60 * 60;
+    private static final int MAX_AGE_OFFLINE = 24 * 60;
     private Context context;
     private String cacheControlValue;
 
@@ -35,10 +34,13 @@ public class OfflineCacheInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
         if (!Network.isConnected(context)) {
-            ViseLog.i(" no network load cache:" + request.cacheControl().toString());
-            request = request.newBuilder().cacheControl(CacheControl.FORCE_CACHE).cacheControl(CacheControl.FORCE_NETWORK).build();
+            request = request.newBuilder()
+                    .cacheControl(CacheControl.FORCE_CACHE)
+                    .build();
             Response response = chain.proceed(request);
-            return response.newBuilder().removeHeader("Pragma").header("Cache-Control", "public, only-if-cached, " + cacheControlValue)
+            return response.newBuilder()
+                    .header("Cache-Control", "public, only-if-cached, " + cacheControlValue)
+                    .removeHeader("Pragma")
                     .build();
         }
         return chain.proceed(request);

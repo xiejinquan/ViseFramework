@@ -17,19 +17,18 @@ import com.vise.base.net.interceptor.HeadersInterceptor;
 import com.vise.base.net.interceptor.OfflineCacheInterceptor;
 import com.vise.base.net.interceptor.OnlineCacheInterceptor;
 import com.vise.base.net.mode.ApiCode;
+import com.vise.base.net.mode.ApiHost;
 import com.vise.base.net.mode.ApiResult;
 import com.vise.base.net.mode.CacheMode;
 import com.vise.base.net.mode.CacheResult;
 import com.vise.base.net.subscriber.ApiCallbackSubscriber;
 import com.vise.log.ViseLog;
 import com.vise.utils.ClassUtil;
+import com.vise.utils.encrypt.SSLUtil;
 
 import java.io.File;
 import java.net.Proxy;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -61,34 +60,15 @@ import rx.schedulers.Schedulers;
 public class ViseApi {
     private static Context context;
     private static ApiService apiService;
-    private static Map<String, String> headers;
-    private static Map<String, String> parameters;
     private static Retrofit retrofit;
     private static Retrofit.Builder retrofitBuilder;
     private static OkHttpClient okHttpClient;
     private static OkHttpClient.Builder okHttpBuilder;
     private static ApiCache apiCache;
     private static ApiCache.Builder apiCacheBuilder;
+    private static CacheMode cacheMode = CacheMode.ONLY_REMOTE;
 
-    private final okhttp3.Call.Factory callFactory;
-    private final List<Converter.Factory> converterFactories;
-    private final List<CallAdapter.Factory> adapterFactories;
-    private final Executor callbackExecutor;
-    private final boolean validateEagerly;
-    private CacheMode cacheMode = CacheMode.ONLY_REMOTE;
-
-    private ViseApi(okhttp3.Call.Factory callFactory, Map<String, String> headers, Map<String, String> parameters, ApiService apiService,
-                    List<Converter.Factory> converterFactories, List<CallAdapter.Factory> adapterFactories, Executor callbackExecutor,
-                    boolean validateEagerly, CacheMode cacheMode) {
-        this.callFactory = callFactory;
-        this.headers = headers;
-        this.parameters = parameters;
-        this.apiService = apiService;
-        this.converterFactories = converterFactories;
-        this.adapterFactories = adapterFactories;
-        this.callbackExecutor = callbackExecutor;
-        this.validateEagerly = validateEagerly;
-        this.cacheMode = cacheMode;
+    private ViseApi() {
     }
 
     /**
@@ -549,13 +529,8 @@ public class ViseApi {
         private static final long CACHE_MAX_SIZE = 10 * 1024 * 1024;//默认最大缓存大小
         private okhttp3.Call.Factory callFactory;
         private Boolean isCookie = false;
-        private Boolean isCache = true;
+        private Boolean isCache = false;
         private HostnameVerifier hostnameVerifier;
-        private List<Converter.Factory> converterFactories = new ArrayList<>();
-        private List<CallAdapter.Factory> adapterFactories = new ArrayList<>();
-        private Executor callbackExecutor;
-        private boolean validateEagerly;
-        private Context mContext;
         private ApiCookie apiCookie;
         private Cache cache;
         private Proxy proxy;
@@ -564,14 +539,13 @@ public class ViseApi {
         private ConnectionPool connectionPool;
         private Converter.Factory converterFactory;
         private CallAdapter.Factory callAdapterFactory;
-        private CacheMode cacheMode;
         private String baseUrl;
 
-        public Builder(Context context) {
-            this.mContext = context;
+        public Builder(Context mContext) {
+            context = mContext;
             okHttpBuilder = new OkHttpClient.Builder();
             retrofitBuilder = new Retrofit.Builder();
-            apiCacheBuilder = new ApiCache.Builder(context);
+            apiCacheBuilder = new ApiCache.Builder(mContext);
         }
 
         /**
@@ -684,7 +658,7 @@ public class ViseApi {
          * @return
          */
         public ViseApi.Builder writeTimeout(int timeout, TimeUnit unit) {
-            if (timeout != -1) {
+            if (timeout > -1) {
                 okHttpBuilder.writeTimeout(timeout, unit);
             } else {
                 okHttpBuilder.writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
@@ -777,16 +751,6 @@ public class ViseApi {
             return this;
         }
 
-        public ViseApi.Builder callbackExecutor(Executor executor) {
-            this.callbackExecutor = checkNotNull(executor, "executor == null");
-            return this;
-        }
-
-        public ViseApi.Builder validateEagerly(boolean validateEagerly) {
-            this.validateEagerly = validateEagerly;
-            return this;
-        }
-
         /**
          * 设置Cookie管理
          * @param cookie
@@ -828,7 +792,7 @@ public class ViseApi {
         }
 
         /**
-         * 设置缓存Key
+         * 设置缓存Key，主要针对网路请求结果进行缓存
          * @param cacheKey
          * @return
          */
@@ -838,7 +802,7 @@ public class ViseApi {
         }
 
         /**
-         * 设置缓存时间，默认永久
+         * 设置缓存时间，默认永久，主要针对网路请求结果进行缓存
          * @param cacheTime
          * @return
          */
@@ -848,17 +812,17 @@ public class ViseApi {
         }
 
         /**
-         * 设置缓存类型
-         * @param cacheMode
+         * 设置缓存类型，可根据类型自动配置缓存策略，主要针对网络请求结果进行缓存
+         * @param mCacheMode
          * @return
          */
-        public ViseApi.Builder cacheMode(CacheMode cacheMode) {
-            this.cacheMode = cacheMode;
+        public ViseApi.Builder cacheMode(CacheMode mCacheMode) {
+            cacheMode = mCacheMode;
             return this;
         }
 
         /**
-         * 设置在线缓存
+         * 设置在线缓存，主要针对网路请求过程进行缓存
          * @param cache
          * @return
          */
@@ -869,7 +833,7 @@ public class ViseApi {
         }
 
         /**
-         * 设置在线缓存
+         * 设置在线缓存，主要针对网路请求过程进行缓存
          * @param cache
          * @param cacheControlValue
          * @return
@@ -881,34 +845,31 @@ public class ViseApi {
         }
 
         /**
-         * 设置离线缓存
+         * 设置离线缓存，主要针对网路请求过程进行缓存
          * @param cache
          * @return
          */
         public ViseApi.Builder cacheOffline(Cache cache) {
-            interceptor(new OfflineCacheInterceptor(mContext));
+            networkInterceptor(new OfflineCacheInterceptor(context));
+            interceptor(new OfflineCacheInterceptor(context));
             this.cache = cache;
             return this;
         }
 
         /**
-         * 设置离线缓存
+         * 设置离线缓存，主要针对网路请求过程进行缓存
          * @param cache
          * @param cacheControlValue
          * @return
          */
         public ViseApi.Builder cacheOffline(Cache cache, final int cacheControlValue) {
-            interceptor(new OfflineCacheInterceptor(mContext, cacheControlValue));
+            networkInterceptor(new OfflineCacheInterceptor(context, cacheControlValue));
+            interceptor(new OfflineCacheInterceptor(context, cacheControlValue));
             this.cache = cache;
             return this;
         }
 
         public ViseApi build() {
-            context = mContext;
-            if (baseUrl == null) {
-                throw new IllegalStateException("Base URL required.");
-            }
-
             if (okHttpBuilder == null) {
                 throw new IllegalStateException("okHttpBuilder required.");
             }
@@ -921,7 +882,11 @@ public class ViseApi {
                 throw new IllegalStateException("apiCacheBuilder required.");
             }
 
+            if (baseUrl == null) {
+                baseUrl = ApiHost.getHost();
+            }
             retrofitBuilder.baseUrl(baseUrl);
+
             if (converterFactory == null) {
                 converterFactory = GsonConverterFactory.create();
             }
@@ -932,18 +897,39 @@ public class ViseApi {
             }
             retrofitBuilder.addCallAdapterFactory(callAdapterFactory);
 
-            if (sslSocketFactory != null) {
-                okHttpBuilder.sslSocketFactory(sslSocketFactory);
+            if (callFactory != null) {
+                retrofitBuilder.callFactory(callFactory);
             }
 
-            if (hostnameVerifier != null) {
-                okHttpBuilder.hostnameVerifier(hostnameVerifier);
+            if (hostnameVerifier == null) {
+                hostnameVerifier = new SSLUtil.UnSafeHostnameVerifier(baseUrl);
+            }
+            okHttpBuilder.hostnameVerifier(hostnameVerifier);
+
+            if (sslSocketFactory == null) {
+                sslSocketFactory = SSLUtil.getSslSocketFactory(null, null, null);
+            }
+            okHttpBuilder.sslSocketFactory(sslSocketFactory);
+
+            if (connectionPool == null) {
+                connectionPool = new ConnectionPool(DEFAULT_MAX_IDLE_CONNECTIONS, DEFAULT_KEEP_ALIVE_DURATION, TimeUnit.SECONDS);
+            }
+            okHttpBuilder.connectionPool(connectionPool);
+
+            if (proxy != null) {
+                okHttpBuilder.proxy(proxy);
+            }
+
+            if (isCookie && apiCookie == null) {
+                apiCookie = new ApiCookie(context);
+            }
+            if (isCookie) {
+                okHttpBuilder.cookieJar(apiCookie);
             }
 
             if (httpCacheDirectory == null) {
-                httpCacheDirectory = new File(mContext.getCacheDir(), "http_cache");
+                httpCacheDirectory = new File(context.getCacheDir(), "http_cache");
             }
-
             if (isCache) {
                 try {
                     if (cache == null) {
@@ -955,29 +941,8 @@ public class ViseApi {
                     ViseLog.e("Could not create http cache" + e);
                 }
             }
-
             if (cache != null) {
                 okHttpBuilder.cache(cache);
-            }
-
-            if (connectionPool == null) {
-                connectionPool = new ConnectionPool(DEFAULT_MAX_IDLE_CONNECTIONS, DEFAULT_KEEP_ALIVE_DURATION, TimeUnit.SECONDS);
-            }
-            okHttpBuilder.connectionPool(connectionPool);
-
-            if (proxy == null) {
-                okHttpBuilder.proxy(proxy);
-            }
-
-            if (isCookie && apiCookie == null) {
-                okHttpBuilder.cookieJar(new ApiCookie(mContext));
-            }
-
-            if (apiCookie != null) {
-                okHttpBuilder.cookieJar(apiCookie);
-            }
-            if (callFactory != null) {
-                retrofitBuilder.callFactory(callFactory);
             }
 
             okHttpClient = okHttpBuilder.build();
@@ -986,8 +951,7 @@ public class ViseApi {
             apiCache = apiCacheBuilder.build();
             apiService = retrofit.create(ApiService.class);
 
-            return new ViseApi(callFactory, headers, parameters, apiService, converterFactories, adapterFactories, callbackExecutor,
-                    validateEagerly, cacheMode);
+            return new ViseApi();
         }
     }
 }

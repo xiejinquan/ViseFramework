@@ -132,12 +132,10 @@ public class SSLUtil {
 
         public UnSafeHostnameVerifier(String host) {
             this.host = host;
-            ViseLog.d("UnSafeHostnameVerifier " + host);
         }
 
         @Override
         public boolean verify(String hostname, SSLSession session) {
-            ViseLog.d("verify " + hostname + " " + this.host);
             if (this.host == null || "".equals(this.host) || !this.host.contains(hostname)) return false;
             return true;
         }

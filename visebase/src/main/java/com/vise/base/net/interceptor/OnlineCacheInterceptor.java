@@ -30,10 +30,13 @@ public class OnlineCacheInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         okhttp3.Response originalResponse = chain.proceed(chain.request());
         String cacheControl = originalResponse.header("Cache-Control");
-        ViseLog.i(cacheControlValue + "s load cache:" + cacheControl);
         if (TextUtils.isEmpty(cacheControl) || cacheControl.contains("no-store") || cacheControl.contains("no-cache") || cacheControl
                 .contains("must-revalidate") || cacheControl.contains("max-age") || cacheControl.contains("max-stale")) {
-            return originalResponse.newBuilder().removeHeader("Pragma").header("Cache-Control", "public, " + cacheControlValue).build();
+            ViseLog.d(originalResponse.headers());
+            return originalResponse.newBuilder()
+                    .header("Cache-Control", "public, " + cacheControlValue)
+                    .removeHeader("Pragma")
+                    .build();
 
         } else {
             return originalResponse;
