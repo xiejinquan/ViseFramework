@@ -17,7 +17,7 @@ import okhttp3.Response;
  * @date: 16/12/31 22:36.
  */
 public class OfflineCacheInterceptor implements Interceptor {
-    private static final int MAX_AGE_OFFLINE = 24 * 60;
+    private static final int MAX_AGE_OFFLINE = 24 * 60 * 60;
     private Context context;
     private String cacheControlValue;
 
@@ -27,7 +27,7 @@ public class OfflineCacheInterceptor implements Interceptor {
 
     public OfflineCacheInterceptor(Context context, int cacheControlValue) {
         this.context = context;
-        this.cacheControlValue = String.format("max-age=%d", cacheControlValue);
+        this.cacheControlValue = String.format("max-stale=%d", cacheControlValue);
     }
 
     @Override

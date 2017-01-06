@@ -528,18 +528,17 @@ public class ViseApi {
         private static final long DEFAULT_KEEP_ALIVE_DURATION = 8;//默认心跳间隔时长
         private static final long CACHE_MAX_SIZE = 10 * 1024 * 1024;//默认最大缓存大小
         private okhttp3.Call.Factory callFactory;
-        private Boolean isCookie = false;
-        private Boolean isCache = false;
-        private HostnameVerifier hostnameVerifier;
-        private ApiCookie apiCookie;
-        private Cache cache;
-        private Proxy proxy;
-        private File httpCacheDirectory;
-        private SSLSocketFactory sslSocketFactory;
-        private ConnectionPool connectionPool;
         private Converter.Factory converterFactory;
         private CallAdapter.Factory callAdapterFactory;
+        private HostnameVerifier hostnameVerifier;
+        private SSLSocketFactory sslSocketFactory;
+        private ConnectionPool connectionPool;
+        private File httpCacheDirectory;
+        private ApiCookie apiCookie;
+        private Cache cache;
         private String baseUrl;
+        private Boolean isCookie = false;
+        private Boolean isCache = false;
 
         public Builder(Context mContext) {
             context = mContext;
@@ -915,10 +914,6 @@ public class ViseApi {
                 connectionPool = new ConnectionPool(DEFAULT_MAX_IDLE_CONNECTIONS, DEFAULT_KEEP_ALIVE_DURATION, TimeUnit.SECONDS);
             }
             okHttpBuilder.connectionPool(connectionPool);
-
-            if (proxy != null) {
-                okHttpBuilder.proxy(proxy);
-            }
 
             if (isCookie && apiCookie == null) {
                 apiCookie = new ApiCookie(context);
