@@ -13,8 +13,8 @@ import rx.functions.Func1;
  */
 public class FirstCacheStrategy<T> extends CacheStrategy<T> {
     @Override
-    public <T> Observable<CacheResult<T>> execute(ApiCache apiCache, String cacheKey, Observable<T> source) {
-        Observable<CacheResult<T>> cache = loadCache(apiCache, cacheKey);
+    public <T> Observable<CacheResult<T>> execute(ApiCache apiCache, String cacheKey, Observable<T> source, Class<T> clazz) {
+        Observable<CacheResult<T>> cache = loadCache(apiCache, cacheKey, clazz);
         cache.onErrorReturn(new Func1<Throwable, CacheResult<T>>() {
             @Override
             public CacheResult<T> call(Throwable throwable) {

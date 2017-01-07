@@ -5,7 +5,9 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.jakewharton.disklrucache.DiskLruCache;
+import com.vise.base.common.GSONUtil;
 import com.vise.base.common.ViseConfig;
 import com.vise.base.kit.Codec;
 import com.vise.base.kit.Kits;
@@ -94,7 +96,7 @@ public class DiskCache implements ICache {
 
     @Override
     public void put(String key, Object value) {
-        put(key, value != null ? value.toString() : null);
+        put(key, value != null ? GSONUtil.gson().toJson(value) : null);
     }
 
     public String get(String key) {

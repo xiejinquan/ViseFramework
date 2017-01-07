@@ -12,7 +12,7 @@ import rx.Observable;
  */
 public class OnlyCacheStrategy<T> extends CacheStrategy<T> {
     @Override
-    public <T> Observable<CacheResult<T>> execute(ApiCache apiCache, String cacheKey, Observable<T> source) {
-        return loadCache(apiCache, cacheKey);
+    public <T> Observable<CacheResult<T>> execute(ApiCache apiCache, String cacheKey, Observable<T> source, Class<T> clazz) {
+        return loadCache(apiCache, cacheKey, clazz);
     }
 }

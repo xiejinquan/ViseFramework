@@ -20,7 +20,6 @@ public class GithubManager<M, K> extends DBManager<M, K> {
     private DaoMaster.DevOpenHelper mHelper;
     private DaoMaster mDaoMaster;
     private DaoSession mDaoSession;
-    private Context context;
 
     private GithubManager() {
 
@@ -38,7 +37,6 @@ public class GithubManager<M, K> extends DBManager<M, K> {
     }
 
     public void init(Context context) {
-        this.context = context;
         mHelper = new DaoMaster.DevOpenHelper(context, DB_NAME, null);
         mDaoMaster = new DaoMaster(mHelper.getWritableDatabase());
         mDaoSession = mDaoMaster.newSession();

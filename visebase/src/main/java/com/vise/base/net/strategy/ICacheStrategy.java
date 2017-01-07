@@ -11,5 +11,5 @@ import rx.Observable;
  * @date: 16/12/31 14:21.
  */
 public interface ICacheStrategy<T> {
-    <T> Observable<CacheResult<T>> execute(ApiCache apiCache, String cacheKey, Observable<T> source);
+    <T> Observable<CacheResult<T>> execute(ApiCache apiCache, String cacheKey, Observable<T> source, Class<T> clazz);
 }

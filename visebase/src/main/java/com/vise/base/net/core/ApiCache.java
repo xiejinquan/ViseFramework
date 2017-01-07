@@ -61,23 +61,23 @@ public class ApiCache {
         diskCache = DiskCache.getInstance(context, diskDir, diskMaxSize).setCacheTime(time);
     }
 
-    public <T> Observable.Transformer<T, CacheResult<T>> transformer(CacheMode cacheMode) {
+    public <T> Observable.Transformer<T, CacheResult<T>> transformer(CacheMode cacheMode, final Class<T> clazz) {
         final ICacheStrategy strategy = loadStrategy(cacheMode);//获取缓存策略
         return new Observable.Transformer<T, CacheResult<T>>() {
             @Override
             public Observable<CacheResult<T>> call(Observable<T> apiResultObservable) {
                 ViseLog.i("cacheKey=" + ApiCache.this.cacheKey);
-                return strategy.execute(ApiCache.this, ApiCache.this.cacheKey, apiResultObservable);
+                return strategy.execute(ApiCache.this, ApiCache.this.cacheKey, apiResultObservable, clazz);
             }
         };
     }
 
 
-    public <T> Observable<T> get(final String key) {
-        return Observable.create(new SimpleSubscribe<T>() {
+    public Observable<String> get(final String key) {
+        return Observable.create(new SimpleSubscribe<String>() {
             @Override
-            T execute() {
-                return (T) diskCache.get(key);
+            String execute() {
+                return diskCache.get(key);
             }
         });
     }

@@ -109,7 +109,7 @@ public class ViseApi {
      * @return
      */
     public <T> Observable<T> get(String url, Map<String, String> maps, Class<T> clazz) {
-        return apiService.get(url, maps).compose(this.<T>norTransformer(clazz));
+        return apiService.get(url, maps).compose(this.norTransformer(clazz));
     }
 
     /**
@@ -135,7 +135,7 @@ public class ViseApi {
      * @return
      */
     public <T> Observable<CacheResult<T>> cacheGet(final String url, final Map<String, String> maps, Class<T> clazz) {
-        return this.get(url, maps, clazz).compose(apiCache.<T>transformer(cacheMode));
+        return this.get(url, maps, clazz).compose(apiCache.transformer(cacheMode, clazz));
     }
 
     /**
@@ -161,7 +161,7 @@ public class ViseApi {
      * @return
      */
     public <T> Observable<T> post(final String url, final Map<String, String> parameters, Class<T> clazz) {
-        return apiService.post(url, parameters).compose(this.<T>norTransformer(clazz));
+        return apiService.post(url, parameters).compose(this.norTransformer(clazz));
     }
 
     /**
@@ -187,7 +187,7 @@ public class ViseApi {
      * @return
      */
     public <T> Observable<CacheResult<T>> cachePost(final String url, final Map<String, String> maps, Class<T> clazz) {
-        return this.post(url, maps, clazz).compose(apiCache.<T>transformer(cacheMode));
+        return this.post(url, maps, clazz).compose(apiCache.transformer(cacheMode, clazz));
     }
 
     /**
@@ -213,7 +213,7 @@ public class ViseApi {
      * @return
      */
     public <T> Observable<T> form(final String url, final @FieldMap(encoded = true) Map<String, Object> fields, Class<T> clazz) {
-        return apiService.postForm(url, fields).compose(this.<T>norTransformer(clazz));
+        return apiService.postForm(url, fields).compose(this.norTransformer(clazz));
     }
 
     /**
@@ -239,7 +239,7 @@ public class ViseApi {
      * @return
      */
     public <T> Observable<T> body(final String url, final Object body, Class<T> clazz) {
-        return apiService.postBody(url, body).compose(this.<T>norTransformer(clazz));
+        return apiService.postBody(url, body).compose(this.norTransformer(clazz));
     }
 
     /**
@@ -265,7 +265,7 @@ public class ViseApi {
      * @return
      */
     public <T> Observable<T> delete(final String url, final Map<String, String> maps, Class<T> clazz) {
-        return apiService.delete(url, maps).compose(this.<T>norTransformer(clazz));
+        return apiService.delete(url, maps).compose(this.norTransformer(clazz));
     }
 
     /**
@@ -291,7 +291,7 @@ public class ViseApi {
      * @return
      */
     public <T> Observable<T> put(final String url, final Map<String, String> maps, Class<T> clazz) {
-        return apiService.put(url, maps).compose(this.<T>norTransformer(clazz));
+        return apiService.put(url, maps).compose(this.norTransformer(clazz));
     }
 
     /**
@@ -317,7 +317,7 @@ public class ViseApi {
      * @return
      */
     public <T> Observable<T> uploadImage(String url, RequestBody requestBody, Class<T> clazz) {
-        return apiService.uploadImage(url, requestBody).compose(this.<T>norTransformer(clazz));
+        return apiService.uploadImage(url, requestBody).compose(this.norTransformer(clazz));
     }
 
     /**
@@ -331,7 +331,7 @@ public class ViseApi {
      */
     public <T> Observable<T> uploadImage(String url, File file, Class<T> clazz) {
         return apiService.uploadImage(url, RequestBody.create(okhttp3.MediaType.parse("image/jpg; " + "charset=utf-8"), file)).compose
-                (this.<T>norTransformer(clazz));
+                (this.norTransformer(clazz));
     }
 
     /**
@@ -345,7 +345,7 @@ public class ViseApi {
      * @return
      */
     public <T> Observable<T> uploadFile(String url, RequestBody requestBody, MultipartBody.Part file, Class<T> clazz) {
-        return apiService.uploadFile(url, requestBody, file).compose(this.<T>norTransformer(clazz));
+        return apiService.uploadFile(url, requestBody, file).compose(this.norTransformer(clazz));
     }
 
     /**
@@ -358,7 +358,7 @@ public class ViseApi {
      * @return
      */
     public <T> Observable<T> uploadFlies(String url, Map<String, RequestBody> files, Class<T> clazz) {
-        return apiService.uploadFiles(url, files).compose(this.<T>norTransformer(clazz));
+        return apiService.uploadFiles(url, files).compose(this.norTransformer(clazz));
     }
 
     /*=============================以下处理服务器返回对象为ApiResult<T>形式的请求=================================*/
@@ -428,7 +428,7 @@ public class ViseApi {
      * @return
      */
     public <T> Observable<CacheResult<T>> apiCacheGet(final String url, final Map<String, String> maps, Class<T> clazz) {
-        return this.apiGet(url, maps, clazz).compose(apiCache.<T>transformer(cacheMode));
+        return this.apiGet(url, maps, clazz).compose(apiCache.transformer(cacheMode, clazz));
     }
 
     /**
@@ -480,7 +480,7 @@ public class ViseApi {
      * @return
      */
     public <T> Observable<CacheResult<T>> apiCachePost(final String url, final Map<String, String> parameters, Class<T> clazz) {
-        return this.apiPost(url, parameters, clazz).compose(apiCache.<T>transformer(cacheMode));
+        return this.apiPost(url, parameters, clazz).compose(apiCache.transformer(cacheMode, clazz));
     }
 
     /**

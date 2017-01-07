@@ -1,5 +1,6 @@
 package com.vise.base.net.strategy;
 
+import com.vise.base.common.GSONUtil;
 import com.vise.base.net.core.ApiCache;
 import com.vise.base.net.mode.CacheResult;
 import com.vise.log.ViseLog;
@@ -15,12 +16,19 @@ import rx.schedulers.Schedulers;
  * @date: 16/12/31 14:28.
  */
 public abstract class CacheStrategy<T> implements ICacheStrategy<T> {
-    <T> Observable<CacheResult<T>> loadCache(final ApiCache apiCache, final String key) {
-        return apiCache.<T>get(key).map(new Func1<T, CacheResult<T>>() {
+    <T> Observable<CacheResult<T>> loadCache(final ApiCache apiCache, final String key, final Class<T>
+            clazz) {
+        return apiCache.<T>get(key).filter(new Func1<String, Boolean>() {
             @Override
-            public CacheResult<T> call(T t) {
+            public Boolean call(String s) {
+                return s != null;
+            }
+        }).map(new Func1<String, CacheResult<T>>() {
+            @Override
+            public CacheResult<T> call(String s) {
+                T t = GSONUtil.gson().fromJson(s, clazz);
                 ViseLog.i("loadCache result=" + t);
-                return new CacheResult<>(true, t);
+                return new CacheResult<T>(true, t);
             }
         });
     }
@@ -36,7 +44,7 @@ public abstract class CacheStrategy<T> implements ICacheStrategy<T> {
                         ViseLog.i("save status => " + status);
                     }
                 });
-                return new CacheResult<>(false, t);
+                return new CacheResult<T>(false, t);
             }
         });
     }
