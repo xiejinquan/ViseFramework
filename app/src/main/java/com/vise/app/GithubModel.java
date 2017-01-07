@@ -1,10 +1,15 @@
 package com.vise.app;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Generated;
+
 /**
  * @Description:
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2017-01-05 13:37
  */
+@Entity
 public class GithubModel {
 
     /**
@@ -41,6 +46,8 @@ public class GithubModel {
      * user_search_url : https://api.github.com/search/users?q={query}{&page,per_page,sort,order}
      */
 
+    @Id(autoincrement = true)
+    private Long id;
     private String current_user_url;
     private String current_user_authorizations_html_url;
     private String authorizations_url;
@@ -72,6 +79,53 @@ public class GithubModel {
     private String user_organizations_url;
     private String user_repositories_url;
     private String user_search_url;
+
+    @Generated(hash = 1630623119)
+    public GithubModel(Long id, String current_user_url, String current_user_authorizations_html_url,
+            String authorizations_url, String code_search_url, String commit_search_url, String emails_url,
+            String emojis_url, String events_url, String feeds_url, String followers_url, String following_url,
+            String gists_url, String hub_url, String issue_search_url, String issues_url, String keys_url,
+            String notifications_url, String organization_repositories_url, String organization_url,
+            String public_gists_url, String rate_limit_url, String repository_url, String repository_search_url,
+            String current_user_repositories_url, String starred_url, String starred_gists_url, String team_url,
+            String user_url, String user_organizations_url, String user_repositories_url, String user_search_url) {
+        this.id = id;
+        this.current_user_url = current_user_url;
+        this.current_user_authorizations_html_url = current_user_authorizations_html_url;
+        this.authorizations_url = authorizations_url;
+        this.code_search_url = code_search_url;
+        this.commit_search_url = commit_search_url;
+        this.emails_url = emails_url;
+        this.emojis_url = emojis_url;
+        this.events_url = events_url;
+        this.feeds_url = feeds_url;
+        this.followers_url = followers_url;
+        this.following_url = following_url;
+        this.gists_url = gists_url;
+        this.hub_url = hub_url;
+        this.issue_search_url = issue_search_url;
+        this.issues_url = issues_url;
+        this.keys_url = keys_url;
+        this.notifications_url = notifications_url;
+        this.organization_repositories_url = organization_repositories_url;
+        this.organization_url = organization_url;
+        this.public_gists_url = public_gists_url;
+        this.rate_limit_url = rate_limit_url;
+        this.repository_url = repository_url;
+        this.repository_search_url = repository_search_url;
+        this.current_user_repositories_url = current_user_repositories_url;
+        this.starred_url = starred_url;
+        this.starred_gists_url = starred_gists_url;
+        this.team_url = team_url;
+        this.user_url = user_url;
+        this.user_organizations_url = user_organizations_url;
+        this.user_repositories_url = user_repositories_url;
+        this.user_search_url = user_search_url;
+    }
+
+    @Generated(hash = 1283633266)
+    public GithubModel() {
+    }
 
     public String getCurrent_user_url() {
         return current_user_url;
@@ -356,5 +410,13 @@ public class GithubModel {
                 ", user_repositories_url='" + user_repositories_url + '\'' +
                 ", user_search_url='" + user_search_url + '\'' +
                 '}';
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

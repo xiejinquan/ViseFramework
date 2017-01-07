@@ -73,6 +73,7 @@ public class ViseApi {
 
     /**
      * 可传入自定义的接口服务
+     *
      * @param service
      * @param <T>
      * @return
@@ -83,6 +84,7 @@ public class ViseApi {
 
     /**
      * 由外部设置被观察者
+     *
      * @param observable
      * @param <T>
      * @return
@@ -99,6 +101,7 @@ public class ViseApi {
 
     /**
      * 普通Get方式请求，需传入实体类
+     *
      * @param url
      * @param maps
      * @param clazz
@@ -111,6 +114,7 @@ public class ViseApi {
 
     /**
      * 普通Get方式请求，无需订阅，只需传入Callback回调
+     *
      * @param url
      * @param maps
      * @param callback
@@ -123,6 +127,7 @@ public class ViseApi {
 
     /**
      * 带缓存Get方式请求，请求前需配置缓存key，缓存时间默认永久，还可以配置缓存策略，需传入实体类
+     *
      * @param url
      * @param maps
      * @param clazz
@@ -135,6 +140,7 @@ public class ViseApi {
 
     /**
      * 带缓存Get方式请求，请求前需配置缓存key，缓存时间默认永久，还可以配置缓存策略，无需订阅，只需配置Callback回调
+     *
      * @param url
      * @param maps
      * @param callback
@@ -147,6 +153,7 @@ public class ViseApi {
 
     /**
      * 普通POST方式请求，需传入实体类
+     *
      * @param url
      * @param parameters
      * @param clazz
@@ -159,6 +166,7 @@ public class ViseApi {
 
     /**
      * 普通POST方式请求，无需订阅，只需传入Callback回调
+     *
      * @param url
      * @param maps
      * @param callback
@@ -171,6 +179,7 @@ public class ViseApi {
 
     /**
      * 带缓存POST方式请求，请求前需配置缓存key，缓存时间默认永久，还可以配置缓存策略，需传入实体类
+     *
      * @param url
      * @param maps
      * @param clazz
@@ -183,6 +192,7 @@ public class ViseApi {
 
     /**
      * 带缓存POST方式请求，请求前需配置缓存key，缓存时间默认永久，还可以配置缓存策略，无需订阅，只需配置Callback回调
+     *
      * @param url
      * @param maps
      * @param callback
@@ -195,6 +205,7 @@ public class ViseApi {
 
     /**
      * 提交表单方式请求，需传入实体类
+     *
      * @param url
      * @param fields
      * @param clazz
@@ -207,6 +218,7 @@ public class ViseApi {
 
     /**
      * 提交表单方式请求，无需订阅，只需传入Callback回调
+     *
      * @param url
      * @param fields
      * @param callback
@@ -219,6 +231,7 @@ public class ViseApi {
 
     /**
      * 提交Body方式请求，需传入实体类
+     *
      * @param url
      * @param body
      * @param clazz
@@ -231,6 +244,7 @@ public class ViseApi {
 
     /**
      * 提交Body方式请求，无需订阅，只需传入Callback回调
+     *
      * @param url
      * @param body
      * @param callback
@@ -243,6 +257,7 @@ public class ViseApi {
 
     /**
      * 删除信息请求，需传入实体类
+     *
      * @param url
      * @param maps
      * @param clazz
@@ -255,6 +270,7 @@ public class ViseApi {
 
     /**
      * 删除信息请求，无需订阅，只需传入Callback回调
+     *
      * @param url
      * @param maps
      * @param callback
@@ -267,6 +283,7 @@ public class ViseApi {
 
     /**
      * 修改信息请求，需传入实体类
+     *
      * @param url
      * @param maps
      * @param clazz
@@ -279,6 +296,7 @@ public class ViseApi {
 
     /**
      * 修改信息请求，无需订阅，只需传入Callback回调
+     *
      * @param url
      * @param maps
      * @param callback
@@ -291,6 +309,7 @@ public class ViseApi {
 
     /**
      * 上传图片，需传入请求body和实体类
+     *
      * @param url
      * @param requestBody
      * @param clazz
@@ -303,6 +322,7 @@ public class ViseApi {
 
     /**
      * 上传图片，需传入图片文件和实体类
+     *
      * @param url
      * @param file
      * @param clazz
@@ -316,6 +336,7 @@ public class ViseApi {
 
     /**
      * 上传文件
+     *
      * @param url
      * @param requestBody
      * @param file
@@ -329,6 +350,7 @@ public class ViseApi {
 
     /**
      * 上传多文件
+     *
      * @param url
      * @param files
      * @param clazz
@@ -343,6 +365,7 @@ public class ViseApi {
 
     /**
      * 由外部设置被观察者
+     *
      * @param observable
      * @param <T>
      * @return
@@ -371,6 +394,7 @@ public class ViseApi {
 
     /**
      * 返回ApiResult<T>的Get方式请求，需传入实体类
+     *
      * @param url
      * @param maps
      * @param clazz
@@ -383,6 +407,7 @@ public class ViseApi {
 
     /**
      * 返回ApiResult<T>的Get方式请求，无需订阅，只需传入Callback回调
+     *
      * @param url
      * @param maps
      * @param callback
@@ -395,6 +420,7 @@ public class ViseApi {
 
     /**
      * 返回ApiResult<T>并带缓存的Get方式请求，需传入实体类
+     *
      * @param url
      * @param maps
      * @param clazz
@@ -407,6 +433,7 @@ public class ViseApi {
 
     /**
      * 返回ApiResult<T>并带缓存的Get方式请求，无需订阅，只需传入Callback回调
+     *
      * @param url
      * @param maps
      * @param callback
@@ -419,6 +446,7 @@ public class ViseApi {
 
     /**
      * 返回ApiResult<T>的POST方式请求，需传入实体类
+     *
      * @param url
      * @param parameters
      * @param clazz
@@ -431,6 +459,7 @@ public class ViseApi {
 
     /**
      * 返回ApiResult<T>的POST方式请求，无需订阅，只需传入Callback回调
+     *
      * @param url
      * @param parameters
      * @param callback
@@ -443,6 +472,7 @@ public class ViseApi {
 
     /**
      * 返回ApiResult<T>并带缓存的POST方式请求，需传入实体类
+     *
      * @param url
      * @param parameters
      * @param clazz
@@ -455,28 +485,29 @@ public class ViseApi {
 
     /**
      * 返回ApiResult<T>并带缓存的POST方式请求，无需订阅，只需传入Callback回调
+     *
      * @param url
      * @param parameters
      * @param callback
      * @param <T>
      * @return
      */
-    public <T> Subscription apiCachePost(final String url, final Map<String, String> parameters, ApiCallback<T>
-            callback) {
-        return this.apiCachePost(url, parameters, ClassUtil.getTClass(callback))
-                .subscribe(new ApiCallbackSubscriber(context, callback));
+    public <T> Subscription apiCachePost(final String url, final Map<String, String> parameters, ApiCallback<T> callback) {
+        return this.apiCachePost(url, parameters, ClassUtil.getTClass(callback)).subscribe(new ApiCallbackSubscriber(context, callback));
     }
 
     /**
      * 清楚所有缓存
+     *
      * @return
      */
-    public Observable<Boolean> clearCache() {
+    public Subscription clearCache() {
         return apiCache.clear();
     }
 
     /**
      * 清除对应Key的缓存
+     *
      * @param key
      */
     public void removeCache(String key) {
@@ -485,6 +516,7 @@ public class ViseApi {
 
     /**
      * 创建ViseApi.Builder
+     *
      * @param context
      * @return
      */
@@ -549,6 +581,7 @@ public class ViseApi {
 
         /**
          * 设置自定义OkHttpClient
+         *
          * @param client
          * @return
          */
@@ -559,6 +592,7 @@ public class ViseApi {
 
         /**
          * 设置Call的工厂
+         *
          * @param factory
          * @return
          */
@@ -569,6 +603,7 @@ public class ViseApi {
 
         /**
          * 设置连接超时时间（秒）
+         *
          * @param timeout
          * @return
          */
@@ -578,6 +613,7 @@ public class ViseApi {
 
         /**
          * 设置读取超时时间（秒）
+         *
          * @param timeout
          * @return
          */
@@ -587,6 +623,7 @@ public class ViseApi {
 
         /**
          * 设置写入超时时间（秒）
+         *
          * @param timeout
          * @return
          */
@@ -596,6 +633,7 @@ public class ViseApi {
 
         /**
          * 设置是否添加Cookie
+         *
          * @param isCookie
          * @return
          */
@@ -606,6 +644,7 @@ public class ViseApi {
 
         /**
          * 设置是否添加缓存
+         *
          * @param isCache
          * @return
          */
@@ -616,6 +655,7 @@ public class ViseApi {
 
         /**
          * 设置代理
+         *
          * @param proxy
          * @return
          */
@@ -626,6 +666,7 @@ public class ViseApi {
 
         /**
          * 设置连接池
+         *
          * @param connectionPool
          * @return
          */
@@ -637,6 +678,7 @@ public class ViseApi {
 
         /**
          * 设置连接超时时间
+         *
          * @param timeout
          * @param unit
          * @return
@@ -652,6 +694,7 @@ public class ViseApi {
 
         /**
          * 设置写入超时时间
+         *
          * @param timeout
          * @param unit
          * @return
@@ -667,6 +710,7 @@ public class ViseApi {
 
         /**
          * 设置读取超时时间
+         *
          * @param timeout
          * @param unit
          * @return
@@ -682,6 +726,7 @@ public class ViseApi {
 
         /**
          * 设置请求BaseURL
+         *
          * @param baseUrl
          * @return
          */
@@ -692,6 +737,7 @@ public class ViseApi {
 
         /**
          * 设置转换工厂
+         *
          * @param factory
          * @return
          */
@@ -702,6 +748,7 @@ public class ViseApi {
 
         /**
          * 设置CallAdapter工厂
+         *
          * @param factory
          * @return
          */
@@ -712,6 +759,7 @@ public class ViseApi {
 
         /**
          * 设置请求头部
+         *
          * @param headers
          * @return
          */
@@ -722,6 +770,7 @@ public class ViseApi {
 
         /**
          * 设置请求参数
+         *
          * @param parameters
          * @return
          */
@@ -732,6 +781,7 @@ public class ViseApi {
 
         /**
          * 设置拦截器
+         *
          * @param interceptor
          * @return
          */
@@ -742,6 +792,7 @@ public class ViseApi {
 
         /**
          * 设置网络拦截器
+         *
          * @param interceptor
          * @return
          */
@@ -752,6 +803,7 @@ public class ViseApi {
 
         /**
          * 设置Cookie管理
+         *
          * @param cookie
          * @return
          */
@@ -763,6 +815,7 @@ public class ViseApi {
 
         /**
          * 设置SSL工厂
+         *
          * @param sslSocketFactory
          * @return
          */
@@ -773,6 +826,7 @@ public class ViseApi {
 
         /**
          * 设置主机验证机制
+         *
          * @param hostnameVerifier
          * @return
          */
@@ -783,6 +837,7 @@ public class ViseApi {
 
         /**
          * 使用POST方式是否需要进行GZIP压缩，服务器不支持则不设置
+         *
          * @return
          */
         public ViseApi.Builder postGzipInterceptor() {
@@ -792,6 +847,7 @@ public class ViseApi {
 
         /**
          * 设置缓存Key，主要针对网路请求结果进行缓存
+         *
          * @param cacheKey
          * @return
          */
@@ -802,6 +858,7 @@ public class ViseApi {
 
         /**
          * 设置缓存时间，默认永久，主要针对网路请求结果进行缓存
+         *
          * @param cacheTime
          * @return
          */
@@ -812,6 +869,7 @@ public class ViseApi {
 
         /**
          * 设置缓存类型，可根据类型自动配置缓存策略，主要针对网络请求结果进行缓存
+         *
          * @param mCacheMode
          * @return
          */
@@ -822,6 +880,7 @@ public class ViseApi {
 
         /**
          * 设置在线缓存，主要针对网路请求过程进行缓存
+         *
          * @param cache
          * @return
          */
@@ -833,6 +892,7 @@ public class ViseApi {
 
         /**
          * 设置在线缓存，主要针对网路请求过程进行缓存
+         *
          * @param cache
          * @param cacheControlValue
          * @return
@@ -845,6 +905,7 @@ public class ViseApi {
 
         /**
          * 设置离线缓存，主要针对网路请求过程进行缓存
+         *
          * @param cache
          * @return
          */
@@ -857,6 +918,7 @@ public class ViseApi {
 
         /**
          * 设置离线缓存，主要针对网路请求过程进行缓存
+         *
          * @param cache
          * @param cacheControlValue
          * @return

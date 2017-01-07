@@ -12,7 +12,10 @@ import java.io.File;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.exceptions.Exceptions;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * @Description:
@@ -97,12 +100,17 @@ public class ApiCache {
         diskCache.remove(key);
     }
 
-    public Observable<Boolean> clear() {
+    public Subscription clear() {
         return Observable.create(new SimpleSubscribe<Boolean>() {
             @Override
             Boolean execute() throws Throwable {
                 diskCache.clear();
                 return true;
+            }
+        }).subscribeOn(Schedulers.io()).subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean status) {
+                ViseLog.i("clear status => " + status);
             }
         });
     }

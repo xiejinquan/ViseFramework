@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.vise.base.net.api.ViseApi;
 import com.vise.base.net.callback.ApiCallback;
 import com.vise.base.net.exception.ApiException;
+import com.vise.base.net.mode.ApiHost;
 import com.vise.base.net.mode.CacheMode;
 import com.vise.base.net.mode.CacheResult;
 import com.vise.log.ViseLog;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
-        api = new ViseApi.Builder(mContext).cache(true).build();
+        api = new ViseApi.Builder(mContext).cache(true).cacheMode(CacheMode.CACHE_AND_REMOTE).cacheKey(ApiHost.getHost()).build();
         init();
     }
 
@@ -56,9 +57,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()){
             case R.id.request_get:
                 mShow_msg.setText("");
-                api.get("", new HashMap<String, String>(), GithubModel.class).subscribe(new Action1<GithubModel>() {
+                api.cacheGet("", new HashMap<String, String>(), GithubModel.class).subscribe(new Action1<CacheResult<GithubModel>>() {
                     @Override
-                    public void call(GithubModel githubModel) {
+                    public void call(CacheResult<GithubModel> githubModel) {
                         ViseLog.i(githubModel.toString());
                         mShow_msg.setText(githubModel.toString());
                     }
@@ -69,10 +70,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
 
+
                 break;
             case R.id.request_post:
                 mShow_msg.setText("");
-                api.get("", new HashMap<String, String>(), new ApiCallback<GithubModel>() {
+                api.clearCache();
+                /*api.get("", new HashMap<String, String>(), new ApiCallback<GithubModel>() {
                     @Override
                     public void onStart() {
                         ViseLog.d("onStart");
@@ -93,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         ViseLog.i(githubModel.toString());
                         mShow_msg.setText(githubModel.toString());
                     }
-                });
+                });*/
                 break;
         }
     }
