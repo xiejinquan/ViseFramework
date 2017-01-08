@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.vise.base.database.DBManager;
 import com.vise.base.net.api.ViseApi;
 import com.vise.base.net.callback.ApiCallback;
 import com.vise.base.net.exception.ApiException;
@@ -14,6 +15,8 @@ import com.vise.base.net.mode.ApiHost;
 import com.vise.base.net.mode.CacheMode;
 import com.vise.base.net.mode.CacheResult;
 import com.vise.log.ViseLog;
+
+import org.greenrobot.greendao.AbstractDao;
 
 import java.util.HashMap;
 
@@ -62,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void call(CacheResult<GithubModel> githubModel) {
                         ViseLog.i(githubModel.toString());
                         mShow_msg.setText(githubModel.toString());
-                        GithubManager.getInstance().insert(githubModel.getCacheData());
+                        DbHelper.getInstance().githubManager().insert(githubModel.getCacheData());
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.request_post:
                 mShow_msg.setText("");
-                ViseLog.i(GithubManager.getInstance().loadAll());
+                ViseLog.i(DbHelper.getInstance().githubManager().loadAll());
                 /*api.get("", new HashMap<String, String>(), new ApiCallback<GithubModel>() {
                     @Override
                     public void onStart() {

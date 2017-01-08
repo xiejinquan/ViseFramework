@@ -19,6 +19,6 @@ public class AppApplication extends Application {
                     .configShowBorders(true);
             ViseLog.plant(new DefaultTree());
         }
-        GithubManager.getInstance().init(this);
+        DbHelper.getInstance().init(this);
     }
 }

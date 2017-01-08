@@ -15,7 +15,8 @@ android {
 
     greendao{
         schemaVersion 1
-        targetGenDir 'src/main/java'
+        targetGenDir 'src/main/gen-java'
+        daoPackage 'com.vise.app'
     }
 
     buildTypes {
@@ -24,6 +25,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    sourceSets.main.java.srcDirs = ['src/main/java','src/main/gen-java']
 }
 
 dependencies {
