@@ -44,11 +44,7 @@ public interface IDatabase<M, K> {
 
     boolean refresh(@NotNull M m);
 
-    boolean closeDataBase();
-
     void runInTx(@NotNull Runnable runnable);
-
-    void clearDaoSession();
 
     AbstractDao<M, K> getAbstractDao();
 

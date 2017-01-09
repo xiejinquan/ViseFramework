@@ -209,9 +209,4 @@ public abstract class DBManager<M, K> implements IDatabase<M, K> {
     @Override
     public abstract AbstractDao<M, K> getAbstractDao();
 
-    @Override
-    public abstract void clearDaoSession();
-
-    @Override
-    public abstract boolean closeDataBase();
 }

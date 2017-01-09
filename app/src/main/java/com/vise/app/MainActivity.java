@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void call(CacheResult<GithubModel> githubModel) {
                         ViseLog.i(githubModel.toString());
                         mShow_msg.setText(githubModel.toString());
-                        DbHelper.getInstance().githubManager().insert(githubModel.getCacheData());
+                        DbHelper.getInstance().gitHub().insert(githubModel.getCacheData());
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.request_post:
                 mShow_msg.setText("");
-                ViseLog.i(DbHelper.getInstance().githubManager().loadAll());
+                ViseLog.i(DbHelper.getInstance().gitHub().loadAll());
                 /*api.get("", new HashMap<String, String>(), new ApiCallback<GithubModel>() {
                     @Override
                     public void onStart() {

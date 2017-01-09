@@ -15,6 +15,8 @@ public class DbHelper {
 
     private static final String DB_NAME = "vise.db";//数据库名称
     private static DbHelper instance;
+    private static DBManager<GithubModel, Long> githubModelStringDBManager;
+    private static DBManager<Person, Long> personStringDBManager;
     private DaoMaster.DevOpenHelper mHelper;
     private DaoMaster mDaoMaster;
     private DaoSession mDaoSession;
@@ -46,25 +48,28 @@ public class DbHelper {
         mDaoSession = mDaoMaster.newSession();
     }
 
-    public DBManager githubManager() {
-        return new DBManager(){
+    public DBManager<GithubModel, Long> gitHub() {
+        if (githubModelStringDBManager == null) {
+            githubModelStringDBManager = new DBManager<GithubModel, Long>(){
+                @Override
+                public AbstractDao<GithubModel, Long> getAbstractDao() {
+                    return mDaoSession.getGithubModelDao();
+                }
+            };
+        }
+        return githubModelStringDBManager;
+    }
 
-            @Override
-            public AbstractDao getAbstractDao() {
-                return mDaoSession.getGithubModelDao();
-            }
-
-            @Override
-            public void clearDaoSession() {
-                clear();
-            }
-
-            @Override
-            public boolean closeDataBase() {
-                close();
-                return true;
-            }
-        };
+    public DBManager<Person, Long> person(){
+        if (personStringDBManager == null) {
+            personStringDBManager = new DBManager<Person, Long>() {
+                @Override
+                public AbstractDao<Person, Long> getAbstractDao() {
+                    return mDaoSession.getPersonDao();
+                }
+            };
+        }
+        return personStringDBManager;
     }
 
     public DaoMaster getDaoMaster() {
