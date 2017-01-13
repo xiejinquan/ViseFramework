@@ -6,7 +6,7 @@ import com.vise.base.net.mode.CacheResult;
 import rx.Observable;
 
 /**
- * @Description:
+ * @Description: 缓存策略--只取缓存
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 16/12/31 14:29.
  */

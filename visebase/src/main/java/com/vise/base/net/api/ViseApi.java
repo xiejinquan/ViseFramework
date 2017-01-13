@@ -23,8 +23,8 @@ import com.vise.base.net.mode.CacheMode;
 import com.vise.base.net.mode.CacheResult;
 import com.vise.base.net.subscriber.ApiCallbackSubscriber;
 import com.vise.log.ViseLog;
-import com.vise.utils.ClassUtil;
-import com.vise.utils.encrypt.SSLUtil;
+import com.vise.utils.assist.ClassUtil;
+import com.vise.utils.assist.SSLUtil;
 
 import java.io.File;
 import java.net.Proxy;

@@ -1,7 +1,7 @@
 package com.vise.base.net.mode;
 
 /**
- * @Description:
+ * @Description: 主机信息
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2017-01-06 10:37
  */

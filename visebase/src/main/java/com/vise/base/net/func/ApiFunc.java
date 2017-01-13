@@ -8,7 +8,7 @@ import okhttp3.ResponseBody;
 import rx.functions.Func1;
 
 /**
- * @Description:
+ * @Description: ResponseBody转T
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2017-01-05 14:39
  */

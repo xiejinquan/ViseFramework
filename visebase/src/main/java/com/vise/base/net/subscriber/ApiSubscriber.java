@@ -13,7 +13,7 @@ import java.lang.ref.WeakReference;
 import rx.Subscriber;
 
 /**
- * @Description:
+ * @Description: API统一订阅者，采用弱引用管理上下文，防止内存泄漏
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2017-01-03 14:07
  */
@@ -29,7 +29,7 @@ public abstract class ApiSubscriber<T> extends Subscriber<T> {
         if (e instanceof ApiException) {
             onError((ApiException) e);
         } else {
-            onError(new ApiException(e, ApiCode.UNKNOWN));
+            onError(new ApiException(e, ApiCode.Request.UNKNOWN));
         }
     }
 
@@ -37,7 +37,7 @@ public abstract class ApiSubscriber<T> extends Subscriber<T> {
     public void onStart() {
         super.onStart();
         if (!Network.isConnected(contextWeakReference.get())) {
-            onError(new ApiException(new NetworkErrorException(), ApiCode.NETWORK_ERROR));
+            onError(new ApiException(new NetworkErrorException(), ApiCode.Request.NETWORK_ERROR));
         }
     }
 

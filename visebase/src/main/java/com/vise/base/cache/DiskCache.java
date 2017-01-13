@@ -5,13 +5,12 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.text.TextUtils;
 
-import com.google.gson.Gson;
 import com.jakewharton.disklrucache.DiskLruCache;
 import com.vise.base.common.GSONUtil;
 import com.vise.base.common.ViseConfig;
-import com.vise.base.kit.Codec;
-import com.vise.base.kit.Kits;
 import com.vise.log.ViseLog;
+import com.vise.utils.cipher.MD5;
+import com.vise.utils.system.AppUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,52 +24,29 @@ import java.util.regex.Pattern;
  * @date: 2016-12-19 15:10
  */
 public class DiskCache implements ICache {
-    public static final String TAG_CACHE = "@createTime{createTime_v}expireMills{expireMills_v}@";
-    public static final String REGEX = "@createTime\\{(\\d{1,})\\}expireMills\\{((-)?\\d{1,})\\}@";
+    private final String TAG_CACHE = "@createTime{createTime_v}expireMills{expireMills_v}@";
+    private final String REGEX = "@createTime\\{(\\d{1,})\\}expireMills\\{((-)?\\d{1,})\\}@";
     public static final int MIN_DISK_CACHE_SIZE = 5 * 1024 * 1024; // 5MB
     public static final int MAX_DISK_CACHE_SIZE = 20 * 1024 * 1024; // 20MB
     public static final long CACHE_NEVER_EXPIRE = -1;//永久不过期
 
-    private static DiskCache instance;
     private DiskLruCache cache;
     private Pattern compile;
     private long cacheTime = CACHE_NEVER_EXPIRE;
 
-    private DiskCache(Context context) {
-        this(context, getDiskCacheDir(context, ViseConfig.CACHE_DISK_DIR), calculateDiskCacheSize(getDiskCacheDir(context, ViseConfig
-                .CACHE_DISK_DIR)));
+    public DiskCache(Context context) {
+        this(context, getDiskCacheDir(context, ViseConfig.CACHE_DISK_DIR),
+                calculateDiskCacheSize(getDiskCacheDir(context, ViseConfig.CACHE_DISK_DIR)));
     }
 
-    private DiskCache(Context context, File diskDir, long diskMaxSize) {
+    public DiskCache(Context context, File diskDir, long diskMaxSize) {
         compile = Pattern.compile(REGEX);
         try {
-            cache = DiskLruCache.open(diskDir, Kits.Package.getVersionCode(context), 1, diskMaxSize);
+            cache = DiskLruCache.open(diskDir, AppUtil.getVersionCode(context), 1, diskMaxSize);
         } catch (IOException e) {
             e.printStackTrace();
             ViseLog.e(e);
         }
-    }
-
-    public static DiskCache getInstance(Context context) {
-        if (instance == null) {
-            synchronized (DiskCache.class) {
-                if (instance == null) {
-                    instance = new DiskCache(context);
-                }
-            }
-        }
-        return instance;
-    }
-
-    public static DiskCache getInstance(Context context, File diskDir, long diskMaxSize) {
-        if (instance == null) {
-            synchronized (DiskCache.class) {
-                if (instance == null) {
-                    instance = new DiskCache(context, diskDir, diskMaxSize);
-                }
-            }
-        }
-        return instance;
     }
 
     public void put(String key, String value) {
@@ -84,8 +60,8 @@ public class DiskCache implements ICache {
 
             DiskLruCache.Editor editor = cache.edit(name);
             StringBuilder content = new StringBuilder(value);
-            content.append(TAG_CACHE.replace("createTime_v", "" + Calendar.getInstance().getTimeInMillis()).replace("expireMills_v", "" +
-                    cacheTime));
+            content.append(TAG_CACHE.replace("createTime_v", "" + Calendar.getInstance().getTimeInMillis())
+                    .replace("expireMills_v", "" + cacheTime));
             editor.set(0, content.toString());
             editor.commit();
         } catch (IOException e) {
@@ -163,8 +139,8 @@ public class DiskCache implements ICache {
         return this;
     }
 
-    public static String getMd5Key(String key) {
-        return Codec.MD5.getMessageDigest(key.getBytes());
+    public String getMd5Key(String key) {
+        return MD5.getMessageDigest(key.getBytes());
     }
 
     private static File getDiskCacheDir(Context context, String dirName) {

@@ -3,7 +3,7 @@ package com.vise.base.net.mode;
 import java.io.Serializable;
 
 /**
- * @Description:
+ * @Description: 设置缓存后的数据返回结果，主要增加是否是缓存数据的区分
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 16/12/31 14:25.
  */

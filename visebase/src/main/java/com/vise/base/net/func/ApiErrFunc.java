@@ -6,7 +6,7 @@ import rx.Observable;
 import rx.functions.Func1;
 
 /**
- * @Description:
+ * @Description: Throwable转Observable<T>
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2017-01-03 16:00
  */

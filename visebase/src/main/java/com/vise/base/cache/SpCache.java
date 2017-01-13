@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.vise.base.common.ViseConfig;
+import com.vise.log.ViseLog;
+import com.vise.utils.cipher.BASE64;
+import com.vise.utils.convert.ByteUtil;
+import com.vise.utils.convert.HexUtil;
 
 /**
  * @Description:
@@ -11,92 +15,108 @@ import com.vise.base.common.ViseConfig;
  * @date: 2016-12-19 15:12
  */
 public class SpCache implements ICache {
-    private static SharedPreferences sharedPreferences;
-    private static SharedPreferences.Editor editor;
+    private SharedPreferences sp;
 
-    static final String SP_NAME = ViseConfig.CACHE_SP_NAME;
-
-    private static SpCache instance;
-
-    private SpCache(Context context) {
-        sharedPreferences = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
+    public SpCache(Context context) {
+        this(context, ViseConfig.CACHE_SP_NAME);
     }
 
-    public static SpCache getInstance(Context context) {
-        if (instance == null) {
-            synchronized (SpCache.class) {
-                if (instance == null) {
-                    instance = new SpCache(context.getApplicationContext());
-                }
+    public SpCache(Context context, String fileName) {
+        sp = context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+    }
+
+    public SharedPreferences getSp() {
+        return sp;
+    }
+
+    @Override
+    public void put(String key, Object ser) {
+        try {
+            ViseLog.i(key + " put: " + ser);
+            if (ser == null) {
+                sp.edit().remove(key).commit();
+            } else {
+                byte[] bytes = ByteUtil.objectToByte(ser);
+                bytes = BASE64.encode(bytes);
+                put(key, HexUtil.encodeHexStr(bytes));
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return instance;
-    }
-
-    @Override
-    public void remove(String key) {
-        editor.remove(key);
-        editor.apply();
-    }
-
-
-    @Override
-    public boolean contains(String key) {
-        return sharedPreferences.contains(key);
-    }
-
-    @Override
-    public void clear() {
-        editor.clear().apply();
-    }
-
-
-    public void putInt(String key, int value) {
-        editor.putInt(key, value);
-        editor.apply();
-    }
-
-    public int getInt(String key, int defValue) {
-        return sharedPreferences.getInt(key, defValue);
-    }
-
-    public void putLong(String key, Long value) {
-        editor.putLong(key, value);
-        editor.apply();
-    }
-
-    public long getLong(String key, long defValue) {
-        return sharedPreferences.getLong(key, defValue);
-    }
-
-
-    public void putBoolean(String key, Boolean value) {
-        editor.putBoolean(key, value);
-        editor.apply();
-    }
-
-    public boolean getBoolean(String key, boolean defValue) {
-        return sharedPreferences.getBoolean(key, defValue);
-    }
-
-
-    public void putString(String key, String value) {
-        editor.putString(key, value);
-        editor.apply();
-    }
-
-    public String getString(String key, String defValue) {
-        return sharedPreferences.getString(key, defValue);
     }
 
     @Override
     public Object get(String key) {
+        try {
+            String hex = get(key, (String) null);
+            if (hex == null) return null;
+            byte[] bytes = HexUtil.decodeHex(hex.toCharArray());
+            bytes = BASE64.decode(bytes);
+            Object obj = ByteUtil.byteToObject(bytes);
+            ViseLog.i(key + " get: " + obj);
+            return obj;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
     @Override
-    public void put(String key, Object value) {
+    public boolean contains(String key) {
+        return false;
+    }
 
+    @Override
+    public void remove(String key) {
+
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    public void put(String key, String value) {
+        if (value == null) {
+            sp.edit().remove(key).commit();
+        } else {
+            sp.edit().putString(key, value).commit();
+        }
+    }
+
+    public void put(String key, boolean value) {
+        sp.edit().putBoolean(key, value).commit();
+    }
+
+    public void put(String key, float value) {
+        sp.edit().putFloat(key, value).commit();
+    }
+
+    public void put(String key, long value) {
+        sp.edit().putLong(key, value).commit();
+    }
+
+    public void putInt(String key, int value) {
+        sp.edit().putInt(key, value).commit();
+    }
+
+    public String get(String key, String defValue) {
+        return sp.getString(key, defValue);
+    }
+
+    public boolean get(String key, boolean defValue) {
+        return sp.getBoolean(key, defValue);
+    }
+
+    public float get(String key, float defValue) {
+        return sp.getFloat(key, defValue);
+    }
+
+    public int getInt(String key, int defValue) {
+        return sp.getInt(key, defValue);
+    }
+
+    public long get(String key, long defValue) {
+        return sp.getLong(key, defValue);
     }
 }

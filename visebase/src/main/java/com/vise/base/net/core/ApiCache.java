@@ -53,12 +53,12 @@ public class ApiCache {
 
     private ApiCache(Context context, String cacheKey, long time) {
         this.cacheKey = cacheKey;
-        this.diskCache = DiskCache.getInstance(context).setCacheTime(time);
+        this.diskCache = new DiskCache(context).setCacheTime(time);
     }
 
     private ApiCache(Context context, File diskDir, long diskMaxSize, String cacheKey, long time) {
         this.cacheKey = cacheKey;
-        diskCache = DiskCache.getInstance(context, diskDir, diskMaxSize).setCacheTime(time);
+        diskCache = new DiskCache(context, diskDir, diskMaxSize).setCacheTime(time);
     }
 
     public <T> Observable.Transformer<T, CacheResult<T>> transformer(CacheMode cacheMode, final Class<T> clazz) {

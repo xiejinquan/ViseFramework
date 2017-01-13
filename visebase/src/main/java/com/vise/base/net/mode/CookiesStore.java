@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.vise.log.ViseLog;
-import com.vise.utils.encrypt.HexUtil;
+import com.vise.utils.convert.HexUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,7 +22,7 @@ import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
 /**
- * @Description:
+ * @Description: Cookie仓库
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 16/12/31 17:57.
  */

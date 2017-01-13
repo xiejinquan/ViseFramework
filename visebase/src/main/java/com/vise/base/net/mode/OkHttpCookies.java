@@ -8,7 +8,7 @@ import java.io.Serializable;
 import okhttp3.Cookie;
 
 /**
- * @Description:
+ * @Description: Cookie序列化对象
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 16/12/31 17:49.
  */

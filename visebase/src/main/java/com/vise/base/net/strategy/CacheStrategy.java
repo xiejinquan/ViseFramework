@@ -11,7 +11,7 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
- * @Description:
+ * @Description: 缓存策略
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 16/12/31 14:28.
  */

@@ -6,7 +6,7 @@ import com.vise.base.net.callback.ApiCallback;
 import com.vise.base.net.exception.ApiException;
 
 /**
- * @Description:
+ * @Description: 包含回调的订阅者，如果订阅这个，上层在不使用订阅者的情况下可获得回调
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2017-01-05 09:35
  */

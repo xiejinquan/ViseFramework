@@ -1,6 +1,5 @@
 package com.vise.base.net.strategy;
 
-import com.vise.base.common.GSONUtil;
 import com.vise.base.net.core.ApiCache;
 import com.vise.base.net.mode.CacheResult;
 
@@ -8,7 +7,7 @@ import rx.Observable;
 import rx.functions.Func1;
 
 /**
- * @Description:
+ * @Description: 缓存策略--缓存和网络
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 16/12/31 14:33.
  */

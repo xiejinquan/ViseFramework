@@ -12,7 +12,7 @@ import okio.GzipSink;
 import okio.Okio;
 
 /**
- * @Description:
+ * @Description: 包含Gzip压缩的请求拦截
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 16/12/31 21:21.
  */
