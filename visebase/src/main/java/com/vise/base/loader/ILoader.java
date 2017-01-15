@@ -8,7 +8,7 @@ import com.vise.base.common.ViseConfig;
 import java.io.File;
 
 /**
- * @Description:
+ * @Description: 图片加载接口
  * @author: <a href="http://xiaoyaoyou1212.360doc.com">DAWI</a>
  * @date: 2016-12-19 15:04
  */

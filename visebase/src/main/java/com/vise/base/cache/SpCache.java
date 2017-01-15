@@ -10,7 +10,7 @@ import com.vise.utils.convert.ByteUtil;
 import com.vise.utils.convert.HexUtil;
 
 /**
- * @Description:
+ * @Description: SharedPreferences存储，支持对象加密存储
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2016-12-19 15:12
  */
@@ -63,17 +63,17 @@ public class SpCache implements ICache {
 
     @Override
     public boolean contains(String key) {
-        return false;
+        return sp.contains(key);
     }
 
     @Override
     public void remove(String key) {
-
+        sp.edit().remove(key).apply();
     }
 
     @Override
     public void clear() {
-
+        sp.edit().clear().apply();
     }
 
     public void put(String key, String value) {

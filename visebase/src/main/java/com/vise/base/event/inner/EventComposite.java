@@ -9,7 +9,7 @@ import java.util.Set;
 import rx.subscriptions.CompositeSubscription;
 
 /**
- * @Description:
+ * @Description: 事件复合
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2016-12-29 19:19
  */

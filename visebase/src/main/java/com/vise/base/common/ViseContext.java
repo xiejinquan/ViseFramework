@@ -7,7 +7,7 @@ import com.vise.log.ViseLog;
 import com.vise.log.inner.DefaultTree;
 
 /**
- * @Description:
+ * @Description: 全局初始化配置
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2016-12-19 14:50
  */

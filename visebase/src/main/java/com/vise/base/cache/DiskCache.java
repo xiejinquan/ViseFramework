@@ -5,7 +5,6 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.text.TextUtils;
 
-import com.jakewharton.disklrucache.DiskLruCache;
 import com.vise.base.common.GSONUtil;
 import com.vise.base.common.ViseConfig;
 import com.vise.log.ViseLog;
@@ -19,7 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @Description:
+ * @Description: 磁盘缓存，KEY加密存储，可定制缓存时长
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2016-12-19 15:10
  */

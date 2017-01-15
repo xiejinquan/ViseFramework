@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @Description:
+ * @Description: 数据操库作接口
  * @author: <a href="http://xiaoyaoyou1212.360doc.com">DAWI</a>
  * @date: 2016-12-29 16:51
  */

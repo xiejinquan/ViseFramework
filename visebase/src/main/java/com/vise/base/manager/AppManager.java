@@ -9,7 +9,7 @@ import com.vise.log.ViseLog;
 import java.util.Stack;
 
 /**
- * @Description:
+ * @Description: Activity堆栈管理
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2016-12-19 14:57
  */

@@ -2,18 +2,20 @@ package com.vise.base.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.vise.base.event.BusFactory;
 import com.vise.base.manager.AppManager;
 
 /**
- * @Description:
+ * @Description: Activity基类
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2016-12-19 14:51
  */
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     protected Context mContext;
     private boolean isOnResumeRegisterBus = false;
@@ -24,6 +26,22 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mContext = this;
         AppManager.getInstance().addActivity(this);
+    }
+
+    @Override
+    public void setContentView(@LayoutRes int layoutResID) {
+        super.setContentView(layoutResID);
+        initView();
+        bindEvent();
+        initData();
+    }
+
+    @Override
+    public void setContentView(View view) {
+        super.setContentView(view);
+        initView();
+        bindEvent();
+        initData();
     }
 
     @Override
@@ -81,4 +99,19 @@ public class BaseActivity extends AppCompatActivity {
         isOnStartRegisterBus = onStartRegisterBus;
         return this;
     }
+
+    /**
+     * 初始化子View
+     */
+    protected abstract void initView();
+
+    /**
+     * 绑定事件
+     */
+    protected abstract void bindEvent();
+
+    /**
+     * 初始化数据
+     */
+    protected abstract void initData();
 }

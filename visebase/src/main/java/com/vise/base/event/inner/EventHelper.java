@@ -10,7 +10,7 @@ import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
 
 /**
- * @Description:
+ * @Description: 事件帮助类
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2016-12-29 19:08
  */

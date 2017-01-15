@@ -5,7 +5,7 @@ import android.app.Application;
 import com.vise.base.common.ViseContext;
 
 /**
- * @Description:
+ * @Description: Application基类
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2016-12-19 14:49
  */

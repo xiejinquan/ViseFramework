@@ -8,7 +8,7 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
- * @Description:
+ * @Description: 事件订阅者
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2016-12-29 19:05
  */

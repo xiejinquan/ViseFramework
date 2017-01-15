@@ -6,7 +6,7 @@ import android.util.LruCache;
 import com.vise.log.ViseLog;
 
 /**
- * @Description:
+ * @Description: 内存缓存
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2016-12-19 15:08
  */

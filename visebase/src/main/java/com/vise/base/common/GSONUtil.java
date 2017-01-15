@@ -3,7 +3,7 @@ package com.vise.base.common;
 import com.google.gson.Gson;
 
 /**
- * @Description:
+ * @Description: Gson单例操作
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 17/1/7 19:20.
  */

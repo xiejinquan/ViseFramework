@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentMap;
 import rx.subscriptions.CompositeSubscription;
 
 /**
- * @Description:
+ * @Description: RxBus事件管理
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2016-12-19 15:07
  */
