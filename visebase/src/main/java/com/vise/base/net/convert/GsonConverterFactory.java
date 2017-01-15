@@ -13,7 +13,7 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 
 /**
- * @Description:
+ * @Description: GSON转换工厂
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 16/12/31 12:19.
  */

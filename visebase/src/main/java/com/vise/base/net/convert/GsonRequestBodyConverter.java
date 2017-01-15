@@ -15,7 +15,7 @@ import okio.Buffer;
 import retrofit2.Converter;
 
 /**
- * @Description:
+ * @Description: T to RequestBody
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2017-01-04 18:05
  */

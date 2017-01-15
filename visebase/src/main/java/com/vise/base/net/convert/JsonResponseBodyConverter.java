@@ -6,7 +6,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Converter;
 
 /**
- * @Description:
+ * @Description: ResponseBody to T
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2017-01-04 18:04
  */

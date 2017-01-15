@@ -379,7 +379,7 @@ public class ViseApi {
                     return (T) value.getData();
                 } else {
                     Throwable throwable = new Throwable("Please call(Observable<T> observable) , < T > is not " + "ApiResult object");
-                    new ApiException(throwable, ApiCode.INVOKE_ERROR);
+                    new ApiException(throwable, ApiCode.Request.INVOKE_ERROR);
                     return (T) result;
                 }
             }

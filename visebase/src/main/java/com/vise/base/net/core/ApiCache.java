@@ -18,7 +18,7 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
- * @Description:
+ * @Description: 针对响应数据进行缓存管理
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 16/12/31 14:27.
  */
