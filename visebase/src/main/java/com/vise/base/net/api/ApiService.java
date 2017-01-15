@@ -6,11 +6,14 @@ import java.util.Map;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HEAD;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -52,16 +55,19 @@ public interface ApiService {
 
     @Multipart
     @POST()
-    Observable<ResponseBody> uploadImage(@Url() String url, @Part("image\"; filename=\"image.jpg") RequestBody requestBody);
+    Observable<ResponseBody> uploadImage(@Url() String url,
+                                         @Part("image\"; filename=\"image" + ".jpg") RequestBody
+                                                 requestBody);
 
     @Multipart
     @POST()
-    Observable<ResponseBody> uploadFile(@Url String fileUrl, @Part("description") RequestBody description, @Part("files") MultipartBody
-            .Part file);
+    Observable<ResponseBody> uploadFile(@Url String fileUrl,
+                                        @Part("description") RequestBody description, @Part("files") MultipartBody.Part file);
 
     @Multipart
     @POST()
-    Observable<ResponseBody> uploadFiles(@Url() String url, @PartMap() Map<String, RequestBody> maps);
+    Observable<ResponseBody> uploadFiles(@Url() String url, @PartMap() Map<String, RequestBody>
+            maps);
 
     @Multipart
     @POST()
@@ -70,4 +76,21 @@ public interface ApiService {
     @Streaming
     @GET
     Observable<ResponseBody> downloadFile(@Url String fileUrl);
+
+    @GET
+    @Streaming
+    Observable<Response<ResponseBody>> downloadFile(@Header("Range") String range, @Url String url);
+
+    @HEAD
+    Observable<Response<Void>> getHttpHeader(@Header("Range") String range, @Url String url);
+
+    @HEAD
+    Observable<Response<Void>> getHttpHeaderWithIfRange(@Header("Range") final String range,
+                                                        @Header("If-Range") final String lastModify,
+                                                        @Url String url);
+
+    @GET
+    Observable<Response<Void>> requestWithIfRange(@Header("Range") final String range,
+                                                  @Header("If-Range") final String lastModify,
+                                                  @Url String url);
 }

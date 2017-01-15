@@ -1,9 +1,9 @@
 package com.vise.base.download;
 
 /**
- * @Description:
+ * @Description: 下载功能入口
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
- * @date: 2016-12-29 19:56
+ * @date: 17/1/15 16:47.
  */
-public class DownloadManager {
+public class ViseDownload {
 }
